@@ -85,9 +85,7 @@ RAG-tracuu/
 │   │   └── llm_factory.py          # OpenRouter LLM Factory
 │   ├── preprocessing/
 │   │   ├── document_loader.py      # Nạp PDF/DOCX đa định dạng
-│   │   ├── text_cleaner.py         # Chuẩn hóa Unicode NFC tiếng Việt
-│   │   ├── hierarchical_chunker.py # Parent-Child Tree Chunking
-│   │   └── chunking.py             # Recursive & Semantic Chunking (dùng trong build)
+│   │   └── legal_chunker.py        # Phân đoạn cấu trúc Chương/Điều/Khoản pháp luật Việt Nam
 │   ├── query_transform/
 │   │   └── query_router.py         # LLMQueryRouter: Rewrite/Decompose/HyDE/Direct
 │   ├── retrieval/

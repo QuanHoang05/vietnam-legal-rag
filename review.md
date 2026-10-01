@@ -135,8 +135,7 @@ src/
 ├── preprocessing/
 │   ├── document_loader.py        # PDF + DOCX loader
 │   ├── text_cleaner.py           # Unicode NFC
-│   ├── hierarchical_chunker.py   # Parent-Child chunking
-│   └── chunking.py               # Recursive & Semantic chunking
+│   └── legal_chunker.py          # Legal Article & Clause chunking
 ├── query_transform/
 │   └── query_router.py           # LLMQueryRouter (Gemini REST)
 ├── retrieval/

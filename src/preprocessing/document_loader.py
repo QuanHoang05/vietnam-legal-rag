@@ -78,59 +78,24 @@ class UniversalDocumentLoader:
                     if p_text:
                         paragraphs.append(p_text)
 
-            # Gom nhóm theo Điều hoặc phân đoạn có độ dài hợp lý (~1000 ký tự)
-            current_section = "Phần mở đầu"
-            current_buffer = []
-            current_len = 0
-            section_idx = 1
-
+            # Nạp toàn bộ các đoạn văn đã làm sạch, bảo toàn cấu trúc chuẩn cho LegalArticleChunker
+            clean_paragraphs = []
             for p in paragraphs:
                 p_clean = clean_vietnamese_text(p)
-                if not p_clean:
-                    continue
+                if p_clean:
+                    clean_paragraphs.append(p_clean)
 
-                # Nhận diện tiêu đề Điều hoặc Chương trong văn bản pháp luật
-                is_heading = any(p_clean.startswith(prefix) for prefix in ["Điều ", "ĐIỀU ", "Chương ", "CHƯƠNG ", "Mục "])
-                
-                if (is_heading and current_buffer) or current_len > 1200:
-                    text_block = "\n".join(current_buffer)
-                    if text_block.strip():
-                        docs.append(Document(
-                            page_content=text_block,
-                            metadata={
-                                "source": docx_file.name,
-                                "category": category,
-                                "file_type": "docx",
-                                "section": current_section,
-                                "section_idx": section_idx,
-                                "tree_path": f"{category}/{docx_file.stem}/sec_{section_idx}",
-                            }
-                        ))
-                        section_idx += 1
-                    current_buffer = []
-                    current_len = 0
-
-                if is_heading:
-                    current_section = p_clean[:80]
-
-                current_buffer.append(p_clean)
-                current_len += len(p_clean)
-
-            # Khối còn lại
-            if current_buffer:
-                text_block = "\n".join(current_buffer)
-                if text_block.strip():
-                    docs.append(Document(
-                        page_content=text_block,
-                        metadata={
-                            "source": docx_file.name,
-                            "category": category,
-                            "file_type": "docx",
-                            "section": current_section,
-                            "section_idx": section_idx,
-                            "tree_path": f"{category}/{docx_file.stem}/sec_{section_idx}",
-                        }
-                    ))
+            if clean_paragraphs:
+                full_text = "\n".join(clean_paragraphs)
+                docs.append(Document(
+                    page_content=full_text,
+                    metadata={
+                        "source": docx_file.name,
+                        "category": category,
+                        "file_type": "docx",
+                        "tree_path": f"{category}/{docx_file.stem}",
+                    }
+                ))
 
         except Exception as e:
             print(f"[UniversalLoader] Lỗi đọc DOCX {docx_file.name}: {e}")

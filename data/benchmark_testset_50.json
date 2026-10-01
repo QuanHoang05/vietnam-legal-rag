@@ -1,114 +1,6 @@
 [
   {
     "id": 1,
-    "category": "RAG_Theory",
-    "user_input": "RAG là gì và nó khắc phục những nhược điểm cố hữu nào của mô hình ngôn ngữ lớn (LLM)?",
-    "reference": "RAG (Retrieval-Augmented Generation) là giải pháp kiến trúc kết hợp Large Language Model với các bộ nhớ ngoài. RAG khắc phục hai giới hạn cố hữu của LLM: hiện tượng ảo giác (hallucination) và sự thiếu hụt tri thức cập nhật, riêng tư bằng cách cung cấp ngữ cảnh thời gian thực trước khi sinh văn bản.",
-    "reference_contexts": [
-      "Retrieval-augmented generation (RAG) là giải pháp kiến trúc nhằm khắc phục hai giới hạn cố hữu của LLM: hallucination và sự thiếu hụt tri thức cập nhật và riêng tư. Thay vì phụ thuộc hoàn toàn vào bộ nhớ tham số cố định sau khi huấn luyện, RAG trang bị cho LLM khả năng tra cứu thời gian thực từ các bộ nhớ ngoài."
-    ]
-  },
-  {
-    "id": 2,
-    "category": "RAG_Theory",
-    "user_input": "Sự khác biệt cốt lõi giữa Recursive Chunking và Semantic Chunking là gì?",
-    "reference": "Recursive Chunking chia nhỏ văn bản dựa trên các ký tự phân tách cố định như xuống dòng hay độ dài ký tự định trước, dễ làm đứt gãy mạch ý nghĩa. Ngược lại, Semantic Chunking sử dụng embedding để đo sự thay đổi ngữ nghĩa giữa các câu liên tiếp qua Cosine Similarity và chỉ ngắt đoạn khi có sự chuyển dịch chủ đề vượt ngưỡng.",
-    "reference_contexts": [
-      "Recursive Chunking: Chia văn bản theo kích thước cố định dựa trên ký tự phân tách như xuống dòng, dấu chấm. Semantic Chunking: Sử dụng embedding để tính mức độ tương đồng giữa các câu, chỉ ngắt đoạn khi phát hiện sự thay đổi về chủ đề, giúp giữ trọn vẹn ngữ nghĩa đoạn văn."
-    ]
-  },
-  {
-    "id": 3,
-    "category": "RAG_Theory",
-    "user_input": "Tại sao BM25 đơn lẻ lại hoạt động kém trên các truy vấn ngữ nghĩa tự nhiên trong hệ thống RAG?",
-    "reference": "BM25 dựa trên tần suất xuất hiện chính xác của từ khóa (TF-IDF), do đó gặp phải hạn chế nghẽn từ vựng (Vocabulary Mismatch). Nó không thể hiểu được các từ đồng nghĩa, sắc thái biểu đạt khác nhau hoặc ngữ cảnh ẩn nếu câu hỏi không chứa chính xác từ vựng có trong tài liệu.",
-    "reference_contexts": [
-      "BM25 gặp vấn đề vocabulary mismatch khi người dùng diễn đạt câu hỏi bằng từ đồng nghĩa hoặc câu hỏi tự nhiên mà từ ngữ không trùng khớp từng chữ với văn bản lưu trữ."
-    ]
-  },
-  {
-    "id": 4,
-    "category": "RAG_Theory",
-    "user_input": "Thuật toán Reciprocal Rank Fusion (RRF) hoạt động như thế nào trong Hybrid Search?",
-    "reference": "RRF chấm điểm tài liệu bằng cách lấy tổng nghịch đảo của thứ hạng của nó trong từng danh sách tìm kiếm (Dense và Sparse): Score(d) = sum(1 / (k + rank(d))), trong đó k thường là 40. RRF không phụ thuộc vào thang điểm tuyệt đối của từng mô hình, giúp dung hợp thứ hạng một cách công bằng và ổn định.",
-    "reference_contexts": [
-      "Reciprocal Rank Fusion (RRF) tính điểm dựa trên nghịch đảo thứ hạng của tài liệu trong các hệ thống tìm kiếm thành phần: RRF_Score(d) = sum(1 / (k + rank_m(d))), với k là hằng số làm mượt mẫu số (thường chọn k=40)."
-    ]
-  },
-  {
-    "id": 5,
-    "category": "RAG_Theory",
-    "user_input": "Kỹ thuật HyDE (Hypothetical Document Embeddings) giúp ích gì cho khâu Retrieval?",
-    "reference": "HyDE sử dụng LLM để sinh ra một đoạn văn bản giả định trả lời cho câu hỏi trước khi tìm kiếm, sau đó nhúng đoạn văn bản giả định này vào không gian vector. Kỹ thuật này chuyển đổi bài toán từ so khớp 'câu hỏi - tài liệu' sang 'tài liệu - tài liệu', giúp tăng cường đáng kể độ tương đồng ngữ nghĩa.",
-    "reference_contexts": [
-      "HyDE (Hypothetical Document Embeddings) hướng dẫn LLM sinh một văn bản giả định (hypothetical document) trả lời câu hỏi, sau đó nhúng văn bản này để tìm kiếm các tài liệu thực tế tương đồng trong cơ sở dữ liệu."
-    ]
-  },
-  {
-    "id": 6,
-    "category": "RAG_Theory",
-    "user_input": "Query Decomposition giải quyết bài toán gì trong các câu hỏi phức tạp (Multi-hop QA)?",
-    "reference": "Query Decomposition phân rã một câu hỏi phức tạp thành nhiều câu hỏi con đơn giản hơn. Mỗi câu hỏi con được truy xuất ngữ cảnh độc lập, sau đó kết hợp các ngữ cảnh này lại để LLM tổng hợp ra câu trả lời cuối cùng, giải quyết triệt để vấn đề mất thông tin khi truy vấn đa bước.",
-    "reference_contexts": [
-      "Query Decomposition chia nhỏ câu hỏi phức hợp thành tối đa 3 câu hỏi con độc lập, tra cứu từng câu hỏi rồi hợp nhất ngữ cảnh nhằm phục vụ các truy vấn dạng Multi-hop QA."
-    ]
-  },
-  {
-    "id": 7,
-    "category": "RAG_Theory",
-    "user_input": "Tại sao cần sử dụng Cross-Encoder Reranker sau khi đã có Vector Search?",
-    "reference": "Vector Search sử dụng mô hình Bi-Encoder để nhúng độc lập câu hỏi và tài liệu nhằm đảm bảo tốc độ cao, nhưng bỏ qua sự tương tác từ ngữ chi tiết giữa chúng. Cross-Encoder đưa đồng thời cả câu hỏi và tài liệu vào mô hình để đánh giá tương quan sâu, cho độ chính xác cao hơn nhiều trên danh sách top ứng viên.",
-    "reference_contexts": [
-      "Bi-Encoder mã hóa độc lập Query và Document để tìm kiếm nhanh, nhưng đánh đổi độ chính xác. Cross-Encoder nhận đồng thời cặp (Query, Document) vào cơ chế self-attention đầy đủ, mang lại điểm số xếp hạng chính xác vượt trội."
-    ]
-  },
-  {
-    "id": 8,
-    "category": "RAG_Theory",
-    "user_input": "Thuật toán MMR (Maximal Marginal Relevance) giải quyết vấn đề gì trong RAG?",
-    "reference": "MMR cân bằng giữa độ liên quan của tài liệu với truy vấn và tính đa dạng giữa các tài liệu được chọn. MMR giúp loại bỏ các đoạn văn bản có nội dung trùng lặp nhau, đảm bảo ngữ cảnh đưa vào LLM phong phú và không lãng phí token.",
-    "reference_contexts": [
-      "Maximal Marginal Relevance (MMR) tối ưu hóa đa mục tiêu: vừa tối đa hóa độ liên quan với truy vấn, vừa phạt các tài liệu có độ tương đồng cao với những tài liệu đã được chọn trước đó nhằm giảm dư thừa thông tin."
-    ]
-  },
-  {
-    "id": 9,
-    "category": "RAG_Theory",
-    "user_input": "Chỉ số Faithfulness trong Ragas đo lường điều gì và cách tính toán ra sao?",
-    "reference": "Faithfulness đo lường mức độ trung thực của câu trả lời so với ngữ cảnh được trích xuất. Ragas trích xuất các khẳng định (claims) trong câu trả lời và dùng LLM kiểm tra xem có bao nhiêu khẳng định được suy diễn trực tiếp từ ngữ cảnh. Tỉ lệ số khẳng định đúng trên tổng số khẳng định chính là điểm Faithfulness.",
-    "reference_contexts": [
-      "Faithfulness đánh giá mức độ trung thực: tỉ lệ giữa số lượng khẳng định (claims) trong câu trả lời có thể suy ra trực tiếp từ ngữ cảnh trích xuất trên tổng số khẳng định được tạo ra."
-    ]
-  },
-  {
-    "id": 10,
-    "category": "RAG_Theory",
-    "user_input": "Chỉ số Answer Relevancy trong Ragas được xác định như thế nào?",
-    "reference": "Answer Relevancy đo lường mức độ liên quan của câu trả lời đối với câu hỏi gốc. Ragas dùng LLM để sinh ngược lại các câu hỏi giả định từ câu trả lời, sau đó tính trung bình độ tương đồng cosine giữa embedding của các câu hỏi giả định này với embedding của câu hỏi gốc.",
-    "reference_contexts": [
-      "Answer Relevancy tính toán mức độ liên quan bằng cách sinh ngược lại các câu hỏi từ câu trả lời, sau đó đo độ tương đồng cosine giữa vector câu hỏi sinh ra và câu hỏi gốc."
-    ]
-  },
-  {
-    "id": 11,
-    "category": "RAG_Theory",
-    "user_input": "Context Precision và Context Recall trong Ragas khác nhau như thế nào?",
-    "reference": "Context Precision đo lường xem các đoạn ngữ cảnh thực sự hữu ích có được xếp ở thứ hạng cao hay không (Signal-to-Noise Ratio). Context Recall đo lường mức độ bao phủ: ngữ cảnh trích xuất được có chứa đầy đủ thông tin để trả lời câu hỏi theo câu trả lời mẫu (Ground Truth) hay không.",
-    "reference_contexts": [
-      "Context Precision đánh giá thứ hạng các đoạn ngữ cảnh liên quan (các đoạn đúng đứng càng cao điểm càng cao). Context Recall đánh giá tỉ lệ thông tin trong ground truth được tìm thấy trong ngữ cảnh."
-    ]
-  },
-  {
-    "id": 12,
-    "category": "RAG_Theory",
-    "user_input": "Lợi ích của cấu trúc Tree/Hierarchical Chunking (Parent-Child) là gì?",
-    "reference": "Parent-Child Chunking giải quyết mâu thuẫn giữa độ chính xác khi tìm kiếm và độ bao quát khi trả lời: Child Chunks nhỏ giúp Vector Search có độ phân giải cao và tìm chính xác từ khóa, trong khi Parent Chunk lớn liên kết kèm theo cung cấp bối cảnh toàn diện để LLM hiểu đúng vấn đề.",
-    "reference_contexts": [
-      "Parent-Child Chunking tách văn bản thành các đoạn con nhỏ (Child) để tìm kiếm vector chính xác cao, đồng thời liên kết với đoạn cha (Parent) lớn hơn để cung cấp toàn bộ bối cảnh cho LLM sinh câu trả lời."
-    ]
-  },
-  {
-    "id": 13,
     "category": "LuatDatDai",
     "user_input": "Nguyên tắc sử dụng đất theo Luật Đất Đai 2024 quy định như thế nào?",
     "reference": "Theo Luật Đất Đai 2024, việc sử dụng đất phải đúng quy hoạch, kế hoạch sử dụng đất và đúng mục đích sử dụng; tiết kiệm, có hiệu quả, bảo vệ môi trường và không làm tổn hại đến lợi ích chính đáng của người sử dụng đất xung quanh.",
@@ -117,7 +9,7 @@
     ]
   },
   {
-    "id": 14,
+    "id": 2,
     "category": "LuatDatDai",
     "user_input": "Nhà nước thu hồi đất để phát triển kinh tế - xã hội vì lợi ích quốc gia, công cộng trong những trường hợp nào?",
     "reference": "Nhà nước thu hồi đất trong các trường hợp thực hiện dự án xây dựng công trình giao thông, thủy lợi, cấp thoát nước, năng lượng, chiếu sáng công cộng; xây dựng cơ sở y tế, giáo dục, văn hóa, thể thao; nhà ở xã hội, nhà ở tái định cư và các dự án phát triển kinh tế quan trọng theo quy định tại Điều 79 Luật Đất Đai 2024.",
@@ -126,7 +18,7 @@
     ]
   },
   {
-    "id": 15,
+    "id": 3,
     "category": "LuatDatDai",
     "user_input": "Quy định về Bảng giá đất theo Luật Đất Đai 2024 có điểm gì mới so với luật cũ?",
     "reference": "Luật Đất Đai 2024 đã bãi bỏ khung giá đất của Chính phủ. Bảng giá đất được Ủy ban nhân dân cấp tỉnh xây dựng, trình Hội đồng nhân dân cùng cấp thông qua và được công bố, áp dụng từ ngày 01 tháng 01 năm 2026, sau đó được điều chỉnh, bổ sung hằng năm theo nguyên tắc thị trường.",
@@ -135,7 +27,7 @@
     ]
   },
   {
-    "id": 16,
+    "id": 4,
     "category": "LuatDatDai",
     "user_input": "Điều kiện cấp Giấy chứng nhận quyền sử dụng đất (Sổ đỏ) cho đất không có giấy tờ theo Luật Đất Đai 2024 là gì?",
     "reference": "Hộ gia đình, cá nhân sử dụng đất trước ngày 01/7/2014 không có giấy tờ, không vi phạm pháp luật về đất đai, không thuộc trường hợp giao đất trái thẩm quyền, nay được UBND cấp xã xác nhận là không có tranh chấp thì được cấp Giấy chứng nhận quyền sử dụng đất theo các mốc thời gian quy định tại Điều 138 Luật Đất Đai 2024.",
@@ -144,7 +36,7 @@
     ]
   },
   {
-    "id": 17,
+    "id": 5,
     "category": "LuatDatDai",
     "user_input": "Quy định về bồi thường, hỗ trợ, tái định cư khi Nhà nước thu hồi đất theo Luật Đất Đai 2024?",
     "reference": "Việc bồi thường khi Nhà nước thu hồi đất phải bảo đảm người có đất thu hồi có chỗ ở, bảo đảm thu nhập và điều kiện sống bằng hoặc tốt hơn nơi ở cũ. Đa dạng hóa hình thức bồi thường: bồi thường bằng đất có cùng mục đích sử dụng, bằng tiền, bằng đất khác mục đích sử dụng hoặc bằng nhà ở.",
@@ -153,7 +45,7 @@
     ]
   },
   {
-    "id": 18,
+    "id": 6,
     "category": "LuatDatDai",
     "user_input": "Người gốc Việt Nam định cư ở nước ngoài được sở hữu nhà ở và đất đai tại Việt Nam như thế nào theo Luật mới?",
     "reference": "Luật Đất Đai 2024 mở rộng quyền sử dụng đất đối với người gốc Việt Nam định cư ở nước ngoài, cho phép họ được phép nhập cảnh vào Việt Nam có quyền mua, thuê mua nhà ở gắn liền với quyền sử dụng đất ở, nhận thừa kế quyền sử dụng đất ở giống như công dân trong nước.",
@@ -162,7 +54,7 @@
     ]
   },
   {
-    "id": 19,
+    "id": 7,
     "category": "LuatDatDai",
     "user_input": "Các hành vi bị nghiêm cấm trong quản lý và sử dụng đất theo Luật Đất Đai 2024?",
     "reference": "Các hành vi bị nghiêm cấm gồm: Lấn đất, chiếm đất, hủy hoại đất; Vi phạm quy hoạch, kế hoạch sử dụng đất; Không sử dụng đất, sử dụng đất không đúng mục đích; Không thực hiện nghĩa vụ tài chính; Cản trở người khác thực hiện quyền hợp pháp về đất đai.",
@@ -171,7 +63,7 @@
     ]
   },
   {
-    "id": 20,
+    "id": 8,
     "category": "LuatLaoDong",
     "user_input": "Bộ luật Lao Động 2019 quy định có mấy loại hợp đồng lao động?",
     "reference": "Bộ luật Lao Động 2019 chỉ quy định 02 loại hợp đồng lao động: Hợp đồng lao động không xác định thời hạn và Hợp đồng lao động xác định thời hạn (có thời hạn không quá 36 tháng). Luật đã bãi bỏ loại hợp đồng theo mùa vụ hoặc công việc nhất định dưới 12 tháng.",
@@ -180,7 +72,7 @@
     ]
   },
   {
-    "id": 21,
+    "id": 9,
     "category": "LuatLaoDong",
     "user_input": "Thời giờ làm việc bình thường và giới hạn làm thêm giờ được quy định như thế nào?",
     "reference": "Thời giờ làm việc bình thường không quá 08 giờ/ngày và không quá 48 giờ/tuần. Thời gian làm thêm giờ không quá 50% số giờ làm việc bình thường trong 01 ngày, tổng số giờ làm thêm không quá 40 giờ trong 01 tháng và không quá 200 giờ trong 01 năm (trường hợp đặc biệt không quá 300 giờ).",
@@ -189,7 +81,7 @@
     ]
   },
   {
-    "id": 22,
+    "id": 10,
     "category": "LuatLaoDong",
     "user_input": "Tiền lương làm thêm giờ vào ban ngày, ban đêm và ngày nghỉ lễ được tính thế nào?",
     "reference": "Người lao động làm thêm giờ vào ngày thường được trả ít nhất 150%; ngày nghỉ hằng tuần ít nhất 200%; ngày nghỉ lễ, tết, ngày nghỉ có hưởng lương ít nhất 300% chưa kể tiền lương ngày lễ. Nếu làm thêm vào ban đêm, người lao động còn được trả thêm ít nhất 30% và 20% phụ trội theo quy định tại Điều 98.",
@@ -198,7 +90,7 @@
     ]
   },
   {
-    "id": 23,
+    "id": 11,
     "category": "LuatLaoDong",
     "user_input": "Các trường hợp người lao động có quyền đơn phương chấm dứt hợp đồng không cần báo trước?",
     "reference": "Người lao động có quyền nghỉ việc ngay không cần báo trước nếu: Không được bố trí đúng công việc, địa điểm làm việc; Không được trả đủ lương hoặc trả lương không đúng hạn; Bị ngược đãi, đánh đập, quấy rối tình dục tại nơi làm việc; Lao động nữ mang thai phải nghỉ theo chỉ định của bác sĩ.",
@@ -207,7 +99,7 @@
     ]
   },
   {
-    "id": 24,
+    "id": 12,
     "category": "LuatLaoDong",
     "user_input": "Quy định về số ngày nghỉ phép hằng năm (phép năm) của người lao động?",
     "reference": "Người lao động làm việc đủ 12 tháng được nghỉ phép năm hưởng nguyên lương: 12 ngày làm việc đối với điều kiện bình thường; 14 ngày đối với lao động chưa thành niên, khuyết tật, làm nghề nặng nhọc, độc hại; 16 ngày đối với công việc đặc biệt nặng nhọc, độc hại. Cứ đủ 05 năm làm việc thì số ngày nghỉ phép tăng thêm 01 ngày.",
@@ -216,61 +108,7 @@
     ]
   },
   {
-    "id": 25,
-    "category": "AI_Tech",
-    "user_input": "Cơ chế Self-Attention trong kiến trúc Transformer hoạt động dựa trên những thành phần nào?",
-    "reference": "Cơ chế Self-Attention tính toán mối tương quan giữa các từ trong cùng một câu thông qua ba vector: Query (Q), Key (K) và Value (V). Điểm tương quan được tính bằng công thức: Attention(Q, K, V) = softmax((Q * K^T) / sqrt(d_k)) * V, giúp mô hình nắm bắt được ngữ cảnh từ xa một cách song song.",
-    "reference_contexts": [
-      "Cơ chế Self-Attention chuyển đổi vector đầu vào thành ba ma trận Query, Key, Value. Trọng số tương quan được tính bằng tích vô hướng giữa Query và Key, chuẩn hóa bởi căn bậc hai của chiều d_k, áp dụng hàm Softmax rồi nhân với Value."
-    ]
-  },
-  {
-    "id": 26,
-    "category": "AI_Tech",
-    "user_input": "Sự khác biệt chính giữa kiến trúc Decoder-only và Encoder-only là gì?",
-    "reference": "Encoder-only (như BERT) xử lý ngữ cảnh hai chiều (bidirectional), tối ưu cho các bài toán phân loại, trích xuất thực thể và nhúng ngữ nghĩa (embedding). Decoder-only (như GPT) sử dụng Causal Masking chỉ nhìn về các từ phía trước, tối ưu cho việc sinh văn bản tự hồi quy (autoregressive text generation).",
-    "reference_contexts": [
-      "Mô hình Encoder-only (BERT, RoBERTa) đọc hiểu ngữ cảnh hai chiều, phù hợp cho trích xuất đặc trưng và embedding. Mô hình Decoder-only (GPT series, LLaMA) sinh văn bản tự hồi quy theo một chiều từ trái sang phải."
-    ]
-  },
-  {
-    "id": 27,
-    "category": "AI_Tech",
-    "user_input": "Kỹ thuật Chain-of-Thought (CoT) prompting giúp cải thiện khả năng suy luận của LLM như thế nào?",
-    "reference": "Chain-of-Thought (Chuỗi suy luận) hướng dẫn LLM phân tách bài toán phức tạp thành các bước suy luận logic trung gian trước khi đưa ra câu trả lời cuối cùng. Việc sinh ra các token suy luận từng bước giúp mô hình có thêm không gian tính toán và hạn chế các sai sót logic.",
-    "reference_contexts": [
-      "Chain-of-Thought (CoT) prompting kích hoạt khả năng suy luận từng bước của mô hình ngôn ngữ lớn bằng cách cung cấp các ví dụ chứa các bước lập luận trung gian trước khi ra kết quả."
-    ]
-  },
-  {
-    "id": 28,
-    "category": "AI_Tech",
-    "user_input": "FastAPI xử lý bất đồng bộ (Asynchronous) thông qua cơ chế nào?",
-    "reference": "FastAPI được xây dựng trên Starlette và Pydantic, chạy trên máy chủ ASGI (như Uvicorn). Nó sử dụng vòng lặp sự kiện (event loop) của Python với cú pháp async/await cho các tác vụ I/O non-blocking, đồng thời tự động điều hướng các hàm 'def' thông thường vào một ThreadPool riêng để tránh làm nghẽn tiến trình chính.",
-    "reference_contexts": [
-      "FastAPI hỗ trợ cả async def (chạy trực tiếp trên Event Loop của ASGI server) và def thông thường (FastAPI tự động chuyển vào external threadpool của AnyIO để xử lý song song, tránh blocking)."
-    ]
-  },
-  {
-    "id": 29,
-    "category": "RAG_Theory",
-    "user_input": "ChromaDB lưu trữ và tìm kiếm vector tương đồng dựa trên cấu trúc đồ thị nào?",
-    "reference": "ChromaDB sử dụng cấu trúc đồ thị HNSW (Hierarchical Navigable Small World) để thực hiện tìm kiếm lân cận gần đúng (ANN). HNSW tổ chức các vector thành nhiều tầng đồ thị phân cấp, cho phép nhảy nhanh qua các khoảng cách xa ở tầng trên và tinh chỉnh tìm kiếm chính xác ở tầng dưới cùng.",
-    "reference_contexts": [
-      "ChromaDB mặc định sử dụng thuật toán HNSW (Hierarchical Navigable Small World) để lập chỉ mục vector, cung cấp sự cân bằng tối ưu giữa tốc độ truy vấn cao và độ chính xác tìm kiếm tương đồng."
-    ]
-  },
-  {
-    "id": 30,
-    "category": "RAG_Theory",
-    "user_input": "Mối quan hệ giữa chunk size và chunk overlap ảnh hưởng thế nào đến chất lượng RAG?",
-    "reference": "Chunk size quá lớn sẽ làm loãng ngữ nghĩa vector và tốn context window; chunk size quá nhỏ làm gãy mạch thông tin. Chunk overlap tạo ra vùng giao thoa giữa hai đoạn liên tiếp, giúp thông tin nằm tại ranh giới cắt không bị đứt đoạn, bảo toàn ngữ cảnh hoàn chỉnh cho quá trình tìm kiếm.",
-    "reference_contexts": [
-      "Chunk overlap đảm bảo tính liền mạch của ngữ cảnh giữa các đoạn cắt kề nhau, ngăn chặn hiện tượng mất thông tin nằm ngay tại điểm ngắt của cửa sổ trượt."
-    ]
-  },
-  {
-    "id": 31,
+    "id": 13,
     "category": "LuatDatDai",
     "user_input": "Các hình thức giao đất, cho thuê đất theo Luật Đất Đai 2024 gồm những gì?",
     "reference": "Các hình thức gồm: Giao đất không thu tiền sử dụng đất; Giao đất có thu tiền sử dụng đất; Cho thuê đất thu tiền thuê đất hằng năm; Cho thuê đất thu tiền thuê đất một lần cho cả thời gian thuê. Việc giao đất, cho thuê đất chủ yếu thực hiện thông qua đấu giá quyền sử dụng đất hoặc đấu thầu dự án.",
@@ -279,7 +117,7 @@
     ]
   },
   {
-    "id": 32,
+    "id": 14,
     "category": "LuatDatDai",
     "user_input": "Thời hạn sử dụng đất đối với đất nông nghiệp giao cho cá nhân trực tiếp sản xuất nông nghiệp là bao lâu?",
     "reference": "Thời hạn giao đất, công nhận quyền sử dụng đất nông nghiệp đối với cá nhân trực tiếp sản xuất nông nghiệp là 50 năm. Khi hết thời hạn sử dụng đất, cá nhân nếu có nhu cầu thì được tiếp tục sử dụng đất theo thời hạn này mà không phải làm thủ tục gia hạn.",
@@ -288,7 +126,7 @@
     ]
   },
   {
-    "id": 33,
+    "id": 15,
     "category": "LuatLaoDong",
     "user_input": "Người sử dụng lao động có nghĩa vụ trả trợ cấp thôi việc cho người lao động trong trường hợp nào?",
     "reference": "Người sử dụng lao động trả trợ cấp thôi việc cho người lao động đã làm việc thường xuyên từ đủ 12 tháng trở lên khi hợp đồng lao động chấm dứt hợp pháp. Mỗi năm làm việc được trợ cấp một nửa tháng tiền lương, trừ thời gian đã tham gia bảo hiểm thất nghiệp và thời gian đã được chi trả trợ cấp thôi việc trước đó.",
@@ -297,7 +135,7 @@
     ]
   },
   {
-    "id": 34,
+    "id": 16,
     "category": "LuatLaoDong",
     "user_input": "Thời gian thử việc tối đa đối với các vị trí công việc được quy định như thế nào?",
     "reference": "Thời gian thử việc: Không quá 180 ngày đối với người quản lý doanh nghiệp; Không quá 60 ngày đối với chức danh nghề nghiệp có trình độ chuyên môn cao đẳng trở lên; Không quá 30 ngày đối với trình độ trung cấp, công nhân kỹ thuật; Không quá 06 ngày làm việc đối với công việc khác.",
@@ -306,25 +144,7 @@
     ]
   },
   {
-    "id": 35,
-    "category": "AI_Tech",
-    "user_input": "Kỹ thuật Fine-tuning khác với RAG như thế nào trong việc cập nhật tri thức cho mô hình?",
-    "reference": "Fine-tuning cập nhật trọng số tham số (parametric memory) bên trong mạng neural, phù hợp để rèn luyện phong cách, ngữ điệu hoặc tác vụ chuyên biệt nhưng tốn kém và dễ gây ảo giác. RAG truy xuất tri thức ngoài (non-parametric memory) tại thời điểm suy luận, cập nhật thông tin tức thì mà không cần huấn luyện lại.",
-    "reference_contexts": [
-      "Fine-tuning thay đổi trọng số mô hình để học hành vi mới nhưng khó cập nhật kiến thức liên tục và tốn chi phí GPU. RAG truy vấn tài liệu động từ kho tri thức ngoài, cung cấp thông tin cập nhật tức thì với nguồn trích dẫn rõ ràng."
-    ]
-  },
-  {
-    "id": 36,
-    "category": "RAG_Theory",
-    "user_input": "Tại sao việc làm sạch văn bản (Text Cleaning) tiếng Việt lại đặc biệt quan trọng trước khi Chunking?",
-    "reference": "Tài liệu PDF tiếng Việt thường chứa lỗi gõ phông chữ (Unicode dựng sẵn vs tổ hợp), các ký tự ngắt trang, dấu gạch nối rớt dòng, khoảng trắng thừa và bảng biểu bị xáo trộn. Nếu không làm sạch, bộ tách từ và embedding sẽ hiểu sai ngữ nghĩa, làm giảm nghiêm trọng chất lượng truy xuất.",
-    "reference_contexts": [
-      "Text Cleaning chuẩn hóa Unicode, loại bỏ ngắt dòng vô nghĩa, liên kết các từ bị đứt đoạn giữa trang để đảm bảo mô hình NLP tiếng Việt (như Underthesea) phân tích cú pháp chuẩn xác."
-    ]
-  },
-  {
-    "id": 37,
+    "id": 17,
     "category": "LuatDatDai",
     "user_input": "Quyền chuyển đổi mục đích sử dụng đất của hộ gia đình, cá nhân được quy định như thế nào?",
     "reference": "Hộ gia đình, cá nhân được chuyển mục đích sử dụng đất nông nghiệp sang đất phi nông nghiệp, đất ở phù hợp với quy hoạch sử dụng đất cấp huyện đã được phê duyệt. Người sử dụng đất phải thực hiện nghĩa vụ tài chính về tiền sử dụng đất, tiền thuê đất chênh lệch theo quy định.",
@@ -333,7 +153,7 @@
     ]
   },
   {
-    "id": 38,
+    "id": 18,
     "category": "LuatLaoDong",
     "user_input": "Hành vi nào bị nghiêm cấm trong lĩnh vực lao động theo Bộ luật Lao Động 2019?",
     "reference": "Nghiêm cấm: Phân biệt đối xử trong lao động; Ngược đãi, cưỡng bức lao động; Quấy rối tình dục tại nơi làm việc; Lợi dụng danh nghĩa dạy nghề, tập nghề để trục lợi hoặc bóc lột sức lao động; Sử dụng lao động chưa thành niên trái pháp luật.",
@@ -342,25 +162,7 @@
     ]
   },
   {
-    "id": 39,
-    "category": "AI_Tech",
-    "user_input": "Pydantic đóng vai trò gì trong việc xây dựng API với FastAPI?",
-    "reference": "Pydantic đảm nhận việc định nghĩa schema dữ liệu, tự động xác thực kiểu dữ liệu (Data Validation) khi nhận request, tự động parse dữ liệu thành Python Object và serialize response trả về client, đồng thời tự động tạo tài liệu OpenAPI (Swagger Docs) chuẩn xác.",
-    "reference_contexts": [
-      "Pydantic cung cấp cơ chế Data Validation mạnh mẽ cho FastAPI, tự động kiểm tra tính hợp lệ của Request Body và sinh OpenAPI schema phục vụ Swagger UI."
-    ]
-  },
-  {
-    "id": 40,
-    "category": "RAG_Theory",
-    "user_input": "Chiến lược Hybrid Search Interleaving hoạt động theo nguyên tắc nào?",
-    "reference": "Interleaving lấy xen kẽ luân phiên các kết quả hàng đầu từ hai công cụ tìm kiếm: Top 1 Dense Vector -> Top 1 BM25 -> Top 2 Dense Vector -> Top 2 BM25... Thuật toán loại bỏ các phần tử trùng lặp và giữ lại danh sách k tài liệu duy nhất có độ bao phủ đa dạng giữa từ khóa và ngữ nghĩa.",
-    "reference_contexts": [
-      "Interleaving Hybrid sắp xếp xen kẽ lần lượt tài liệu từ Dense Retriever và BM25 Retriever theo tỉ lệ 1:1, tự động loại trừ các văn bản trùng lặp để đưa ra kết quả kết hợp."
-    ]
-  },
-  {
-    "id": 41,
+    "id": 19,
     "category": "LuatDatDai",
     "user_input": "Hạn mức giao đất nông nghiệp cho cá nhân theo Luật Đất Đai 2024?",
     "reference": "Hạn mức giao đất trồng cây hằng năm, đất nuôi trồng thủy sản không quá 03 ha cho mỗi loại đất đối với các tỉnh, thành phố trực thuộc trung ương ở khu vực Đông Nam Bộ và đồng bằng sông Cửu Long; không quá 02 ha đối với các tỉnh, thành phố khác.",
@@ -369,7 +171,7 @@
     ]
   },
   {
-    "id": 42,
+    "id": 20,
     "category": "LuatLaoDong",
     "user_input": "Quy định về thời gian nghỉ thai sản đối với lao động nữ theo Bộ luật Lao Động?",
     "reference": "Lao động nữ được nghỉ thai sản trước và sau khi sinh con là 06 tháng; thời gian nghỉ trước khi sinh không quá 02 tháng. Trường hợp lao động nữ sinh đôi trở lên thì từ con thứ hai trở đi, cứ mỗi con, người mẹ được nghỉ thêm 01 tháng.",
@@ -378,25 +180,7 @@
     ]
   },
   {
-    "id": 43,
-    "category": "AI_Tech",
-    "user_input": "Khái niệm Temperature trong tham số sinh của LLM mang ý nghĩa gì?",
-    "reference": "Temperature kiểm soát độ ngẫu nhiên của phân phối xác suất token tiếp theo. Temperature = 0.0 làm phân phối tập trung cao nhất vào token có xác suất lớn nhất (deterministic/greedy), phù hợp cho các bài toán tra cứu chính xác như RAG. Temperature cao hơn kích thích tính sáng tạo và đa dạng từ vựng.",
-    "reference_contexts": [
-      "Temperature điều chỉnh độ mượt của hàm softmax: giá trị thấp (0.0) ưu tiên chọn token có xác suất cao nhất, đảm bảo tính ổn định và xác định cho tác vụ hỏi đáp trích xuất."
-    ]
-  },
-  {
-    "id": 44,
-    "category": "RAG_Theory",
-    "user_input": "Semantic Breakpoint Threshold trong Semantic Chunking được xác định thế nào?",
-    "reference": "Semantic Breakpoint Threshold thường được đặt dựa trên độ dốc thay đổi cosine distance giữa các cặp câu liên tiếp. Điểm ngắt (breakpoint) được kích hoạt khi khoảng cách ngữ nghĩa giữa hai câu vượt quá một ngưỡng phân vị (percentile threshold, ví dụ 50% hoặc 95%), báo hiệu sự chuyển mạch nội dung.",
-    "reference_contexts": [
-      "Semantic Breakpoint Threshold xác định ranh giới cắt đoạn khi khoảng cách ngữ nghĩa giữa hai câu liền kề vượt ngưỡng cho trước, đảm bảo mỗi chunk đại diện cho một chủ đề nhất quán."
-    ]
-  },
-  {
-    "id": 45,
+    "id": 21,
     "category": "LuatDatDai",
     "user_input": "Các trường hợp không được bồi thường về đất khi Nhà nước thu hồi đất?",
     "reference": "Không được bồi thường về đất khi: Đất được Nhà nước giao không thu tiền sử dụng đất; Đất được Nhà nước cho thuê trả tiền hằng năm; Đất nông nghiệp sử dụng vào mục đích công ích của cấp xã; Đất được giao để quản lý; Đất thu hồi do vi phạm pháp luật về đất đai hoặc chấm dứt sử dụng đất tự nguyện.",
@@ -405,7 +189,7 @@
     ]
   },
   {
-    "id": 46,
+    "id": 22,
     "category": "LuatLaoDong",
     "user_input": "Kỷ luật sa thải người lao động được áp dụng trong những trường hợp nào?",
     "reference": "Hình thức sa thải áp dụng khi người lao động: Trộm cắp, tham ô, đánh bạc, sử dụng ma túy tại nơi làm việc; Tiết lộ bí mật kinh doanh, công nghệ; Có hành vi quấy rối tình dục; Người lao động tự ý bỏ việc 05 ngày cộng dồn trong 30 ngày hoặc 20 ngày cộng dồn trong 365 ngày mà không có lý do chính đáng.",
@@ -414,25 +198,7 @@
     ]
   },
   {
-    "id": 47,
-    "category": "AI_Tech",
-    "user_input": "Tại sao Uvicorn là lựa chọn hàng đầu để chạy các ứng dụng FastAPI?",
-    "reference": "Uvicorn là một máy chủ web ASGI (Asynchronous Server Gateway Interface) siêu nhẹ được xây dựng trên uvloop và httptools, cho tốc độ xử lý I/O bất đồng bộ cực cao tương đương NodeJS và Golang, cho phép FastAPI xử lý hàng nghìn kết nối đồng thời với mức sử dụng tài nguyên tối thiểu.",
-    "reference_contexts": [
-      "Uvicorn là ASGI server chuẩn cho Python, tận dụng uvloop (thư viện C nhanh nhất thay thế asyncio event loop) để mang lại thông lượng cao cho FastAPI."
-    ]
-  },
-  {
-    "id": 48,
-    "category": "RAG_Theory",
-    "user_input": "Sự khác biệt giữa Bi-Encoder và Cross-Encoder trong việc biểu diễn văn bản?",
-    "reference": "Bi-Encoder ánh xạ Query và Document thành hai vector độc lập trong cùng một không gian nhúng, cho phép tính toán khoảng cách cực nhanh qua Dot Product hoặc Cosine. Cross-Encoder nhận cả hai văn bản vào chung một chuỗi token đầu vào, cho phép tất cả các từ tương tác qua các tầng self-attention, đạt độ chính xác tối đa nhưng tốc độ chậm hơn.",
-    "reference_contexts": [
-      "Bi-Encoder mã hóa độc lập hai văn bản (thích hợp cho bước Retrieval ban đầu với hàng triệu tài liệu). Cross-Encoder đưa cả hai văn bản qua mô hình cùng lúc (thích hợp cho bước Re-ranking top 10-20 tài liệu)."
-    ]
-  },
-  {
-    "id": 49,
+    "id": 23,
     "category": "LuatDatDai",
     "user_input": "Thẩm quyền giải quyết tranh chấp đất đai theo Luật Đất Đai 2024?",
     "reference": "Tranh chấp đất đai phải qua hòa giải tại UBND cấp xã nơi có đất. Nếu hòa giải không thành: Tranh chấp đất đai mà đương sự có Giấy chứng nhận hoặc giấy tờ hợp lệ do Tòa án nhân dân giải quyết; Tranh chấp không có giấy tờ thì đương sự được lựa chọn nộp đơn yêu cầu giải quyết tại UBND cấp có thẩm quyền hoặc khởi kiện tại Tòa án.",
@@ -441,12 +207,246 @@
     ]
   },
   {
-    "id": 50,
-    "category": "RAG_Theory",
-    "user_input": "Làm thế nào để đo lường và hạn chế hiện tượng ảo giác (Hallucination) trong ứng dụng RAG thực tế?",
-    "reference": "Để hạn chế ảo giác: Giảm Temperature về 0.0, thiết lập system prompt nghiêm ngặt chỉ trả lời dựa trên ngữ cảnh được cung cấp (Strict Context Constraint), sử dụng Re-ranking để loại bỏ ngữ cảnh nhiễu. Để đo lường: Sử dụng metric Faithfulness của Ragas để định lượng tỷ lệ khẳng định có căn cứ từ tài liệu.",
+    "category": "LuatDatDai",
+    "user_input": "Đất đai được phân loại thành những nhóm đất nào theo Luật Đất Đai 2024?",
+    "reference": "Theo Điều 9 Luật Đất đai 2024, căn cứ vào mục đích sử dụng, đất đai được phân loại bao gồm 03 nhóm: Nhóm đất nông nghiệp, Nhóm đất phi nông nghiệp và Nhóm đất chưa sử dụng.",
     "reference_contexts": [
-      "Giảm thiểu ảo giác bằng cách cố định Seed, đặt Temperature=0.0, yêu cầu LLM trích dẫn nguồn văn bản, sử dụng Cross-Encoder lọc nhiễu và đo lường định kỳ bằng chỉ số Faithfulness của Ragas."
-    ]
+      "Điều 9 Luật Đất đai 2024 quy định về phân loại đất: Căn cứ vào mục đích sử dụng, đất đai được phân loại bao gồm nhóm đất nông nghiệp, nhóm đất phi nông nghiệp, nhóm đất chưa sử dụng."
+    ],
+    "id": 24
+  },
+  {
+    "category": "LuatDatDai",
+    "user_input": "Nhóm đất phi nông nghiệp bao gồm những loại đất nào theo Luật Đất Đai 2024?",
+    "reference": "Nhóm đất phi nông nghiệp theo khoản 3 Điều 9 Luật Đất đai 2024 bao gồm: Đất ở (đất ở tại nông thôn, đất ở tại đô thị); Đất xây dựng trụ sở cơ quan; Đất quốc phòng, an ninh; Đất xây dựng công trình sự nghiệp; Đất sản xuất, kinh doanh phi nông nghiệp; Đất sử dụng vào mục đích công cộng; Đất sử dụng cho hoạt động tôn giáo, tín ngưỡng; Đất nghĩa trang, nhà tang lễ, cơ sở hỏa táng; Đất có mặt nước chuyên dùng; và Đất phi nông nghiệp khác.",
+    "reference_contexts": [
+      "Khoản 3 Điều 9 Luật Đất đai 2024: Nhóm đất phi nông nghiệp bao gồm: đất ở (đất ở tại nông thôn, đất ở tại đô thị); đất xây dựng trụ sở cơ quan; đất quốc phòng, an ninh; đất công trình sự nghiệp; đất sản xuất, kinh doanh phi nông nghiệp; đất công cộng; đất tôn giáo, tín ngưỡng; đất nghĩa trang; đất phi nông nghiệp khác."
+    ],
+    "id": 25
+  },
+  {
+    "category": "LuatDatDai",
+    "user_input": "Quyền của công dân đối với đất đai được quy định như thế nào trong Luật Đất Đai 2024?",
+    "reference": "Theo Điều 26 Luật Đất đai 2024, công dân có các quyền: 1. Tham gia xây dựng, góp ý, giám sát việc hoàn thiện và thực thi chính sách, pháp luật về đất đai; 2. Tiếp cận các thông tin đất đai do cơ quan nhà nước quản lý, công bố; 3. Được Nhà nước bảo hộ các quyền và lợi ích hợp pháp về quyền sử dụng đất, tài sản gắn liền với đất; 4. Thực hiện các quyền của người sử dụng đất theo luật định.",
+    "reference_contexts": [
+      "Điều 26 Luật Đất đai 2024 quy định quyền của công dân đối với đất đai gồm: tham gia xây dựng, góp ý, giám sát chính sách pháp luật đất đai; tiếp cận thông tin đất đai do Nhà nước công bố; được Nhà nước bảo hộ quyền và lợi ích hợp pháp về đất đai; thực hiện quyền của người sử dụng đất."
+    ],
+    "id": 26
+  },
+  {
+    "category": "LuatDatDai",
+    "user_input": "Nghĩa vụ chung của người sử dụng đất theo Luật Đất Đai 2024 bao gồm những gì?",
+    "reference": "Theo Điều 31 Luật Đất đai 2024, người sử dụng đất có các nghĩa vụ chung: Sử dụng đất đúng mục đích, đúng ranh giới thửa đất, đúng quy định về độ sâu và chiều cao; Thực hiện đăng ký đất đai, kê khai; Thực hiện đầy đủ nghĩa vụ tài chính; Bảo vệ đất, bảo vệ môi trường; Trả lại đất khi Nhà nước có quyết định thu hồi.",
+    "reference_contexts": [
+      "Điều 31 Luật Đất đai 2024 quy định nghĩa vụ chung của người sử dụng đất: Sử dụng đất đúng mục đích, đúng ranh giới thửa đất; Đăng ký đất đai; Thực hiện nghĩa vụ tài chính về đất đai; Tuân thủ quy định bảo vệ đất, bảo vệ môi trường; Giao lại đất khi Nhà nước thu hồi."
+    ],
+    "id": 27
+  },
+  {
+    "category": "LuatDatDai",
+    "user_input": "Điều kiện để người sử dụng đất thực hiện các quyền chuyển nhượng, tặng cho, thừa kế quyền sử dụng đất là gì?",
+    "reference": "Theo khoản 1 Điều 45 Luật Đất đai 2024, người sử dụng đất được thực hiện các quyền chuyển nhượng, tặng cho, thừa kế khi có đủ các điều kiện: 1. Có Giấy chứng nhận quyền sử dụng đất; 2. Đất không có tranh chấp hoặc tranh chấp đã được giải quyết bằng bản án/quyết định có hiệu lực; 3. Quyền sử dụng đất không bị kê biên, áp dụng biện pháp khẩn cấp tạm thời; 4. Trong thời hạn sử dụng đất; 5. Quyền sử dụng đất không bị áp dụng biện pháp ngăn chặn theo quy định pháp luật.",
+    "reference_contexts": [
+      "Khoản 1 Điều 45 Luật Đất đai 2024: Điều kiện thực hiện các quyền chuyển đổi, chuyển nhượng, thừa kế, tặng cho quyền sử dụng đất gồm: Có Giấy chứng nhận quyền sử dụng đất; Đất không có tranh chấp; Quyền sử dụng đất không bị kê biên để bảo đảm thi hành án; Trong thời hạn sử dụng đất; Không bị áp dụng biện pháp ngăn chặn."
+    ],
+    "id": 28
+  },
+  {
+    "category": "LuatDatDai",
+    "user_input": "Nhà nước thu hồi đất vì mục đích quốc phòng, an ninh trong những trường hợp nào?",
+    "reference": "Theo Điều 78 Luật Đất đai 2024, Nhà nước thu hồi đất vì mục đích quốc phòng, an ninh trong các trường hợp: Làm nơi đóng quân, trụ sở làm việc; Xây dựng căn cứ quân sự; Xây dựng công trình phòng thủ quốc gia, trận địa, công trình đặc biệt; Xây dựng ga, cảng quân sự; Xây dựng trường bắn, thao trường, trung tâm huấn luyện; Doanh trại, kho tàng quân đội, công an; Học viện, trường đào tạo quốc phòng, an ninh.",
+    "reference_contexts": [
+      "Điều 78 Luật Đất đai 2024: Nhà nước thu hồi đất vì mục đích quốc phòng, an ninh trong các trường hợp: làm nơi đóng quân, trụ sở làm việc; căn cứ quân sự; công trình phòng thủ quốc gia, trận địa; ga, cảng, sân bay quân sự; kho tàng của lực lượng vũ trang nhân dân; trường bắn, thao trường."
+    ],
+    "id": 29
+  },
+  {
+    "category": "LuatDatDai",
+    "user_input": "Các trường hợp thu hồi đất do vi phạm pháp luật về đất đai theo Luật Đất Đai 2024?",
+    "reference": "Theo Điều 81 Luật Đất đai 2024, các trường hợp thu hồi đất do vi phạm gồm: 1. Sử dụng đất không đúng mục đích đã bị xử phạt vi phạm hành chính mà tiếp tục vi phạm; 2. Người sử dụng đất hủy hoại đất và đã bị xử phạt mà tiếp tục vi phạm; 3. Đất được giao, cho thuê không đúng đối tượng hoặc không đúng thẩm quyền; 4. Đất do nhận chuyển nhượng, nhận tặng cho từ người được giao đất không được phép chuyển nhượng; 5. Không thực hiện nghĩa vụ tài chính về đất đai; 6. Đất chậm tiến độ sử dụng đất quá thời gian quy định.",
+    "reference_contexts": [
+      "Điều 81 Luật Đất đai 2024 quy định các trường hợp thu hồi đất do vi phạm pháp luật đất đai: sử dụng đất không đúng mục đích đã bị xử phạt mà tiếp tục vi phạm; hủy hoại đất; giao đất không đúng đối tượng hoặc thẩm quyền; không thực hiện nghĩa vụ tài chính về đất đai; đất chậm tiến độ sử dụng đất."
+    ],
+    "id": 30
+  },
+  {
+    "category": "LuatDatDai",
+    "user_input": "Thu hồi đất do chấm dứt việc sử dụng đất theo pháp luật hoặc tự nguyện trả lại đất gồm những trường hợp nào?",
+    "reference": "Theo Điều 82 Luật Đất đai 2024, thu hồi đất do chấm dứt việc sử dụng gồm: 1. Tổ chức được Nhà nước giao đất không thu tiền bị giải thể, phá sản hoặc chấm dứt hoạt động; 2. Cá nhân sử dụng đất chết mà không có người thừa kế; 3. Người sử dụng đất tự nguyện trả lại đất; 4. Đất được Nhà nước giao, cho thuê có thời hạn nhưng không được gia hạn sử dụng đất.",
+    "reference_contexts": [
+      "Điều 82 Luật Đất đai 2024 quy định thu hồi đất do chấm dứt việc sử dụng đất hoặc tự nguyện trả lại đất: tổ chức được giao đất không thu tiền bị giải thể, phá sản; cá nhân sử dụng đất chết không có người thừa kế; người sử dụng đất tự nguyện trả lại đất; đất hết thời hạn sử dụng mà không được gia hạn."
+    ],
+    "id": 31
+  },
+  {
+    "category": "LuatDatDai",
+    "user_input": "Quy định về bồi thường về đất khi Nhà nước thu hồi đất nông nghiệp của hộ gia đình, cá nhân?",
+    "reference": "Theo Điều 96 Luật Đất đai 2024, hộ gia đình, cá nhân đang sử dụng đất nông nghiệp khi Nhà nước thu hồi đất được bồi thường bằng đất nông nghiệp hoặc bằng tiền hoặc bằng đất có mục đích sử dụng khác với loại đất thu hồi hoặc bằng nhà ở nếu địa phương có điều kiện về quỹ đất, quỹ nhà ở.",
+    "reference_contexts": [
+      "Điều 96 Luật Đất đai 2024: Hộ gia đình, cá nhân sử dụng đất nông nghiệp khi Nhà nước thu hồi đất được bồi thường bằng đất nông nghiệp hoặc bằng tiền hoặc bằng đất có mục đích sử dụng khác hoặc bằng nhà ở."
+    ],
+    "id": 32
+  },
+  {
+    "category": "LuatDatDai",
+    "user_input": "Quy định về bồi thường về đất khi Nhà nước thu hồi đất ở của hộ gia đình, cá nhân?",
+    "reference": "Theo Điều 98 Luật Đất đai 2024, hộ gia đình, cá nhân có đất ở khi Nhà nước thu hồi đất được bồi thường bằng đất ở hoặc nhà ở tái định cư hoặc bằng tiền nếu không có nhu cầu nhận đất ở, nhà ở. Trường hợp thu hồi hết đất ở mà không còn đất ở, nhà ở nào khác trong địa bàn thì được bố trí tái định cư.",
+    "reference_contexts": [
+      "Điều 98 Luật Đất đai 2024 quy định bồi thường về đất khi thu hồi đất ở: bồi thường bằng đất ở hoặc nhà ở tái định cư hoặc bằng tiền. Người có đất ở thu hồi mà phải di chuyển chỗ ở được ưu tiên bố trí tái định cư tại chỗ."
+    ],
+    "id": 33
+  },
+  {
+    "category": "LuatDatDai",
+    "user_input": "Những trường hợp nào được Nhà nước giao đất không thu tiền sử dụng đất theo Luật Đất Đai 2024?",
+    "reference": "Theo Điều 118 Luật Đất đai 2024, Nhà nước giao đất không thu tiền sử dụng đất gồm: 1. Cá nhân trực tiếp sản xuất nông nghiệp trong hạn mức; 2. Đất xây dựng trụ sở cơ quan Đảng, cơ quan nhà nước, Mặt trận Tổ quốc; 3. Đất quốc phòng, an ninh; 4. Đất sử dụng vào mục đích công cộng không nhằm mục đích kinh doanh; 5. Đất nghĩa trang, cơ sở hỏa táng không nhằm mục đích kinh doanh; 6. Đất tôn giáo, tín ngưỡng.",
+    "reference_contexts": [
+      "Điều 118 Luật Đất đai 2024 quy định giao đất không thu tiền sử dụng đất: cá nhân trực tiếp sản xuất nông nghiệp trong hạn mức; đất xây dựng trụ sở cơ quan nhà nước; đất quốc phòng, an ninh; đất công cộng không nhằm mục đích kinh doanh; đất tín ngưỡng, tôn giáo."
+    ],
+    "id": 34
+  },
+  {
+    "category": "LuatDatDai",
+    "user_input": "Nguyên tắc cấp Giấy chứng nhận quyền sử dụng đất, quyền sở hữu tài sản gắn liền với đất theo Luật Đất Đai 2024?",
+    "reference": "Theo Điều 135 Luật Đất đai 2024: 1. Giấy chứng nhận được cấp theo từng thửa đất cho người có quyền sử dụng đất, sở hữu tài sản; 2. Thửa đất có nhiều người chung quyền sử dụng thì cấp cho mỗi người 01 Giấy chứng nhận hoặc cấp 01 Giấy trao cho người đại diện; 3. Giấy chứng nhận chỉ được cấp sau khi người sử dụng đất hoàn thành nghĩa vụ tài chính, trừ trường hợp được miễn, giảm hoặc ghi nợ.",
+    "reference_contexts": [
+      "Điều 135 Luật Đất đai 2024: Giấy chứng nhận được cấp theo từng thửa đất. Thửa đất có nhiều người chung quyền thì cấp cho từng người hoặc trao cho người đại diện. Cấp Giấy chứng nhận sau khi hoàn thành nghĩa vụ tài chính theo quy định."
+    ],
+    "id": 35
+  },
+  {
+    "category": "LuatDatDai",
+    "user_input": "Bảng giá đất theo Luật Đất Đai 2024 được áp dụng trong những trường hợp cụ thể nào?",
+    "reference": "Theo khoản 1 Điều 159 Luật Đất đai 2024, Bảng giá đất được áp dụng để: Tính tiền sử dụng đất khi công nhận quyền sử dụng đất; Tính tiền thuê đất trả tiền hằng năm; Tính thuế sử dụng đất; Tính thuế thu nhập từ chuyển quyền sử dụng đất; Tính tiền lệ phí trong quản lý, sử dụng đất; Tính tiền xử phạt vi phạm hành chính trong lĩnh vực đất đai; Tính tiền bồi thường khi gây thiệt hại trong quản lý, sử dụng đất.",
+    "reference_contexts": [
+      "Khoản 1 Điều 159 Luật Đất đai 2024 quy định Bảng giá đất được áp dụng để: tính tiền sử dụng đất khi công nhận quyền sử dụng đất; tính tiền thuê đất trả hằng năm; tính thuế sử dụng đất; tính lệ phí trước bạ; tính tiền phạt vi phạm hành chính trong lĩnh vực đất đai."
+    ],
+    "id": 36
+  },
+  {
+    "category": "LuatLaoDong",
+    "user_input": "Người lao động có những quyền và nghĩa vụ cơ bản nào theo Bộ luật Lao Động 2019?",
+    "reference": "Theo Điều 5 Bộ luật Lao động 2019, người lao động có quyền: làm việc, tự do lựa chọn việc làm; hưởng lương phù hợp; từ chối làm việc khi có nguy cơ rõ ràng đe dọa tính mạng; thành lập, gia nhập tổ chức đại diện người lao động; đình công theo quy định. Đồng thời có nghĩa vụ: thực hiện hợp đồng lao động; chấp hành kỷ luật lao động, nội quy lao động; tuân thủ quy định về an toàn, vệ sinh lao động.",
+    "reference_contexts": [
+      "Điều 5 Bộ luật Lao động 2019: Quyền của người lao động: tự do lựa chọn việc làm, hưởng lương phù hợp, từ chối làm việc có nguy cơ đe dọa tính mạng, đình công theo quy định. Nghĩa vụ: thực hiện hợp đồng lao động, chấp hành kỷ luật và nội quy lao động."
+    ],
+    "id": 37
+  },
+  {
+    "category": "LuatLaoDong",
+    "user_input": "Quyền và nghĩa vụ của người sử dụng lao động theo Bộ luật Lao Động 2019 gồm những gì?",
+    "reference": "Theo Điều 6 Bộ luật Lao động 2019, người sử dụng lao động có quyền: tuyển dụng, bố trí, quản lý, điều hành lao động; khen thưởng và xử lý kỷ luật lao động; đóng cửa tạm thời nơi làm việc. Có nghĩa vụ: thực hiện hợp đồng lao động; tôn trọng danh dự, nhân phẩm của người lao động; đối thoại, thương lượng tập thể; trả lương đúng hạn và đóng bảo hiểm xã hội, bảo hiểm y tế, bảo hiểm thất nghiệp cho người lao động.",
+    "reference_contexts": [
+      "Điều 6 Bộ luật Lao động 2019: Người sử dụng lao động có quyền tuyển dụng, bố trí lao động, khen thưởng và xử lý kỷ luật lao động. Có nghĩa vụ thực hiện hợp đồng, tôn trọng danh dự nhân phẩm người lao động, trả lương đầy đủ và đóng BHXH, BHYT, BHTN."
+    ],
+    "id": 38
+  },
+  {
+    "category": "LuatLaoDong",
+    "user_input": "Định nghĩa và nội dung cơ bản của hợp đồng lao động theo Bộ luật Lao Động 2019 là gì?",
+    "reference": "Theo Điều 13 Bộ luật Lao động 2019, hợp đồng lao động là sự thỏa thuận giữa người lao động và người sử dụng lao động về việc làm có trả công, tiền lương, điều kiện lao động, quyền và nghĩa vụ của mỗi bên trong quan hệ lao động. Trường hợp hai bên thỏa thuận bằng tên gọi khác nhưng có nội dung thể hiện về việc làm có trả công, tiền lương và sự quản lý, điều hành, giám sát của một bên thì vẫn được coi là hợp đồng lao động.",
+    "reference_contexts": [
+      "Điều 13 Bộ luật Lao động 2019: Hợp đồng lao động là sự thỏa thuận giữa người lao động và người sử dụng lao động về việc làm có trả công, tiền lương, điều kiện lao động, quyền và nghĩa vụ của mỗi bên. Mọi thỏa thuận có trả công và có sự quản lý điều hành đều được coi là hợp đồng lao động."
+    ],
+    "id": 39
+  },
+  {
+    "category": "LuatLaoDong",
+    "user_input": "Hình thức của hợp đồng lao động được quy định như thế nào theo Bộ luật Lao Động 2019?",
+    "reference": "Theo Điều 14 Bộ luật Lao động 2019, hợp đồng lao động phải được giao kết bằng một trong các hình thức: 1. Bằng văn bản và làm thành 02 bản (người lao động giữ 01 bản, người sử dụng lao động giữ 01 bản); 2. Thông qua phương tiện điện tử dưới hình thức thông điệp dữ liệu có giá trị như hợp đồng bằng văn bản; 3. Bằng lời nói đối với hợp đồng có thời hạn dưới 01 tháng (trừ công việc giúp việc gia đình, người chưa đủ 15 tuổi, hoặc nhóm người lao động).",
+    "reference_contexts": [
+      "Điều 14 Bộ luật Lao động 2019: Hợp đồng lao động giao kết bằng văn bản làm thành 02 bản; hoặc giao kết thông qua phương tiện điện tử dưới hình thức thông điệp dữ liệu; hoặc bằng lời nói đối với hợp đồng dưới 01 tháng."
+    ],
+    "id": 40
+  },
+  {
+    "category": "LuatLaoDong",
+    "user_input": "Nguyên tắc giao kết hợp đồng lao động theo Bộ luật Lao Động 2019 là gì?",
+    "reference": "Theo Điều 15 Bộ luật Lao động 2019, nguyên tắc giao kết hợp đồng lao động gồm: 1. Tự nguyện, bình đẳng, thiện chí, hợp tác và trung thực; 2. Tự do giao kết hợp đồng lao động nhưng không được trái pháp luật, thỏa ước lao động tập thể và đạo đức xã hội.",
+    "reference_contexts": [
+      "Điều 15 Bộ luật Lao động 2019 quy định nguyên tắc giao kết hợp đồng lao động: Tự nguyện, bình đẳng, thiện chí, hợp tác và trung thực; Tự do giao kết hợp đồng nhưng không được trái pháp luật, thỏa ước lao động tập thể và đạo đức xã hội."
+    ],
+    "id": 41
+  },
+  {
+    "category": "LuatLaoDong",
+    "user_input": "Tiền lương của người lao động trong thời gian thử việc được tính ít nhất bằng bao nhiêu?",
+    "reference": "Theo Điều 26 Bộ luật Lao động 2019, tiền lương của người lao động trong thời gian thử việc do hai bên thỏa thuận nhưng ít nhất phải bằng 85% mức lương của công việc đó.",
+    "reference_contexts": [
+      "Điều 26 Bộ luật Lao động 2019 quy định tiền lương thử việc: Tiền lương của người lao động trong thời gian thử việc do hai bên thỏa thuận nhưng ít nhất phải bằng 85% mức lương của công việc đó."
+    ],
+    "id": 42
+  },
+  {
+    "category": "LuatLaoDong",
+    "user_input": "Những trường hợp nào dẫn đến chấm dứt hợp đồng lao động theo Bộ luật Lao Động 2019?",
+    "reference": "Theo Điều 34 Bộ luật Lao động 2019, hợp đồng lao động chấm dứt khi: 1. Hết hạn hợp đồng; 2. Đã hoàn thành công việc; 3. Hai bên thỏa thuận chấm dứt; 4. Người lao động bị kết án phạt tù hoặc bị cấm làm công việc; 5. Người lao động chết, bị tuyên bố mất tích hoặc mất năng lực hành vi dân sự; 6. Người sử dụng lao động chấm dứt hoạt động; 7. Người lao động hoặc người sử dụng lao động đơn phương chấm dứt hợp đồng hợp pháp.",
+    "reference_contexts": [
+      "Điều 34 Bộ luật Lao động 2019 quy định các trường hợp chấm dứt hợp đồng lao động: hết hạn hợp đồng; hoàn thành công việc; hai bên thỏa thuận chấm dứt; người lao động chết hoặc bị phạt tù; người sử dụng lao động chấm dứt hoạt động; đơn phương chấm dứt hợp đồng hợp pháp."
+    ],
+    "id": 43
+  },
+  {
+    "category": "LuatLaoDong",
+    "user_input": "Người sử dụng lao động có quyền đơn phương chấm dứt hợp đồng lao động trong những trường hợp nào?",
+    "reference": "Theo Điều 36 Bộ luật Lao động 2019, người sử dụng lao động có quyền đơn phương chấm dứt hợp đồng khi: Người lao động thường xuyên không hoàn thành công việc; Bị ốm đau, tai nạn đã điều trị dài ngày mà khả năng lao động chưa hồi phục; Do thiên tai, hỏa hoạn, dịch bệnh nguy hiểm buộc phải thu hẹp sản xuất; Người lao động không có mặt tại nơi làm việc sau thời hạn tạm hoãn hợp đồng; Người lao động đủ tuổi nghỉ hưu; Người lao động tự ý bỏ việc từ 05 ngày làm việc liên tục trở lên mà không có lý do chính đáng.",
+    "reference_contexts": [
+      "Điều 36 Bộ luật Lao động 2019: Người sử dụng lao động được quyền đơn phương chấm dứt hợp đồng khi: người lao động thường xuyên không hoàn thành công việc; ốm đau điều trị dài ngày; do thiên tai, dịch bệnh buộc thu hẹp sản xuất; tự ý bỏ việc từ 05 ngày liên tục không có lý do chính đáng."
+    ],
+    "id": 44
+  },
+  {
+    "category": "LuatLaoDong",
+    "user_input": "Nghĩa vụ của người lao động khi đơn phương chấm dứt hợp đồng lao động trái pháp luật?",
+    "reference": "Theo Điều 40 Bộ luật Lao động 2019, khi đơn phương chấm dứt hợp đồng trái pháp luật, người lao động: 1. Không được trợ cấp thôi việc; 2. Phải bồi thường cho người sử dụng lao động nửa tháng tiền lương theo hợp đồng; 3. Nếu vi phạm thời hạn báo trước thì phải bồi thường một khoản tiền tương ứng với tiền lương trong những ngày không báo trước; 4. Phải hoàn trả chi phí đào tạo theo quy định.",
+    "reference_contexts": [
+      "Điều 40 Bộ luật Lao động 2019: Người lao động đơn phương chấm dứt hợp đồng trái pháp luật không được trợ cấp thôi việc; phải bồi thường nửa tháng tiền lương theo hợp đồng; bồi thường tiền lương tương ứng những ngày không báo trước và hoàn trả chi phí đào tạo."
+    ],
+    "id": 45
+  },
+  {
+    "category": "LuatLaoDong",
+    "user_input": "Nghĩa vụ của người sử dụng lao động khi đơn phương chấm dứt hợp đồng lao động trái pháp luật?",
+    "reference": "Theo Điều 41 Bộ luật Lao động 2019, người sử dụng lao động khi chấm dứt hợp đồng trái pháp luật phải: 1. Nhận người lao động trở lại làm việc; 2. Trả tiền lương, đóng bảo hiểm trong những ngày người lao động không được làm việc cộng thêm ít nhất 02 tháng tiền lương; 3. Nếu người lao động không muốn tiếp tục làm việc thì ngoài tiền trên, phải trả thêm trợ cấp thôi việc; 4. Nếu vi phạm thời hạn báo trước thì phải bồi thường tiền lương tương ứng những ngày không báo trước.",
+    "reference_contexts": [
+      "Điều 41 Bộ luật Lao động 2019: Người sử dụng lao động đơn phương chấm dứt trái pháp luật phải nhận người lao động trở lại làm việc; trả đủ tiền lương, bảo hiểm những ngày không được làm việc cộng thêm ít nhất 02 tháng tiền lương; trả trợ cấp thôi việc nếu người lao động không muốn làm tiếp."
+    ],
+    "id": 46
+  },
+  {
+    "category": "LuatLaoDong",
+    "user_input": "Khái niệm tiền lương và nguyên tắc trả lương theo Bộ luật Lao Động 2019?",
+    "reference": "Theo Điều 90 và Điều 94 Bộ luật Lao động 2019: Tiền lương là số tiền người sử dụng lao động trả cho người lao động theo thỏa thuận để thực hiện công việc, bao gồm mức lương theo công việc/chức danh, phụ cấp và các khoản bổ sung khác; Mức lương không được thấp hơn mức lương tối thiểu. Người sử dụng lao động phải trả lương trực tiếp, đầy đủ, đúng hạn cho người lao động và không được hạn chế hoặc can thiệp vào quyền tự do chi tiêu lương của người lao động.",
+    "reference_contexts": [
+      "Điều 90 và Điều 94 Bộ luật Lao động 2019: Tiền lương bao gồm mức lương theo công việc, phụ cấp lương và các khoản bổ sung khác, không được thấp hơn mức lương tối thiểu. Tiền lương phải được trả trực tiếp, đầy đủ, đúng hạn và không can thiệp vào quyền chi tiêu của người lao động."
+    ],
+    "id": 47
+  },
+  {
+    "category": "LuatLaoDong",
+    "user_input": "Quy định về tiền thưởng cho người lao động theo Bộ luật Lao Động 2019 như thế nào?",
+    "reference": "Theo Điều 104 Bộ luật Lao động 2019: Thưởng là số tiền hoặc tài sản hoặc bằng các hình thức khác mà người sử dụng lao động thưởng cho người lao động căn cứ vào kết quả sản xuất, kinh doanh và mức độ hoàn thành công việc của người lao động. Quy chế thưởng do người sử dụng lao động quyết định và công bố công khai tại nơi làm việc sau khi tham khảo ý kiến của tổ chức đại diện người lao động tại cơ sở.",
+    "reference_contexts": [
+      "Điều 104 Bộ luật Lao động 2019 quy định về thưởng: Thưởng là số tiền hoặc tài sản căn cứ vào kết quả sản xuất, kinh doanh và mức độ hoàn thành công việc. Quy chế thưởng do người sử dụng lao động quyết định và công bố công khai tại nơi làm việc."
+    ],
+    "id": 48
+  },
+  {
+    "category": "LuatLaoDong",
+    "user_input": "Người lao động được nghỉ làm việc, hưởng nguyên lương trong những ngày lễ, tết nào?",
+    "reference": "Theo Điều 112 Bộ luật Lao động 2019, người lao động được nghỉ làm việc, hưởng nguyên lương trong tổng cộng 11 ngày lễ, tết: 1. Tết Dương lịch: 01 ngày (ngày 01/01); 2. Tết Âm lịch: 05 ngày; 3. Ngày Chiến thắng: 01 ngày (ngày 30/4); 4. Ngày Quốc tế lao động: 01 ngày (ngày 01/5); 5. Quốc khánh: 02 ngày (ngày 02/9 và 01 ngày liền kề trước hoặc sau); 6. Ngày Giỗ Tổ Hùng Vương: 01 ngày (ngày 10/3 âm lịch).",
+    "reference_contexts": [
+      "Điều 112 Bộ luật Lao động 2019 quy định các ngày nghỉ lễ, tết hưởng nguyên lương: Tết Dương lịch (01 ngày), Tết Âm lịch (05 ngày), Ngày Chiến thắng (01 ngày), Ngày Quốc tế lao động (01 ngày), Quốc khánh (02 ngày), Giỗ Tổ Hùng Vương (01 ngày)."
+    ],
+    "id": 49
+  },
+  {
+    "category": "LuatLaoDong",
+    "user_input": "Bộ luật Lao Động 2019 quy định có những hình thức xử lý kỷ luật lao động nào?",
+    "reference": "Theo Điều 124 Bộ luật Lao động 2019, có 04 hình thức xử lý kỷ luật lao động bao gồm: 1. Khiển trách; 2. Kéo dài thời hạn nâng lương không quá 06 tháng; 3. Cách chức; 4. Sa thải. Nghiêm cấm áp dụng hình thức xử lý kỷ luật lao động khác không được pháp luật quy định.",
+    "reference_contexts": [
+      "Điều 124 Bộ luật Lao động 2019 quy định 04 hình thức xử lý kỷ luật lao động: 1. Khiển trách; 2. Kéo dài thời hạn nâng lương không quá 06 tháng; 3. Cách chức; 4. Sa thải."
+    ],
+    "id": 50
   }
 ]

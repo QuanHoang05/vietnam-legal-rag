@@ -15,6 +15,11 @@ import argparse
 from typing import Optional, List, Dict, Any
 from pathlib import Path
 
+# Đảm bảo console Windows in ký tự tiếng Việt không lỗi charmap
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 # Đảm bảo import được cấu hình từ thư mục gốc
 ROOT_DIR = Path(__file__).resolve().parent
@@ -23,7 +28,7 @@ if str(ROOT_DIR) not in sys.path:
 
 from configs.settings import settings
 from src.preprocessing.document_loader import UniversalDocumentLoader
-from src.preprocessing.hierarchical_chunker import HierarchicalTreeChunker
+from src.preprocessing.legal_chunker import LegalArticleChunker
 from src.models.embedding_factory import get_embeddings
 from src.storage.vector_store import VectorDB, HybridVectorDB
 
@@ -42,7 +47,7 @@ def build_full_knowledge_index(
     actual_key = ""
 
     print("=" * 70)
-    print(" 🚀 BẮT ĐẦU QUY TRÌNH LẬP CHỈ MỤC TOÀN BỘ KHO TRI THỨC (PRE-INDEXING)")
+    print(" [*] BAT DAU QUY TRINH LAP CHI MUC KHO TRI THUC PHAP LUAT (PRE-INDEXING)")
     print(f" - Thư mục tài liệu:   {settings.DATA_DIR}")
     print(f" - Thư mục lưu trữ:    {settings.PERSIST_DIR}")
     print("=" * 70)
@@ -74,15 +79,10 @@ def build_full_knowledge_index(
         print("[BuildIndex Lỗi] Không tìm thấy tài liệu nào trong thư mục 'ducument'!")
         return
 
-    # 2. Phân đoạn văn bản theo cấu trúc cây (Hierarchical Tree Chunking)
-    print("\n[BuildIndex] Đang phân đoạn theo cấu trúc cây (Hierarchical Tree Chunking)...")
-    tree_chunker = HierarchicalTreeChunker(
-        parent_chunk_size=1200,
-        parent_chunk_overlap=150,
-        child_chunk_size=450,
-        child_chunk_overlap=80,
-    )
-    child_docs, parent_store = tree_chunker.split(raw_docs)
+    # 2. Phân đoạn văn bản pháp luật theo cấu trúc Chương / Điều / Khoản
+    print("\n[BuildIndex] Đang phân đoạn văn bản pháp luật theo cấu trúc Chương/Điều/Khoản (Legal Article Chunking)...")
+    legal_chunker = LegalArticleChunker(max_chunk_size=1400)
+    child_docs, parent_store = legal_chunker.split(raw_docs)
 
 
     if max_chunks and max_chunks < len(child_docs):
