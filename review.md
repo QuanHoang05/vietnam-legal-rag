@@ -1,5 +1,26 @@
 # REVIEW — RÀ SOÁT & SỬA ĐỔI CODEBASE (2026-09-29)
 
+---
+
+# ✅ TRẠNG THÁI SỬA LỖI (cập nhật 2026-10-01 08:23)
+
+| # | Lỗi | File | Trạng thái |
+|:--:|:---|:---|:---:|
+| F1 | Index chỉ 12.6% corpus — `max_pages=50` | `document_loader.py:23` | ✅ ĐÃ SỬA |
+| F2 | CLI chết `KeyError: history_block` với `decompose`/`hyde` | `main.py:103,111` | ✅ ĐÃ SỬA |
+| F3 | QueryRouter là no-op — Gemini quota 20 req/ngày | `query_router.py` | ✅ GHI LOG rõ, fallback `direct` |
+| F4 | BM25 nhiễu score=0 đẩy 15 chunk tùy ý vào pool | `hybrid_retriever.py:83-86` | ✅ ĐÃ SỬA |
+| F5 | Reranker chết âm thầm, không log | `reranker.py:56-72` | ✅ ĐÃ SỬA |
+| F6 | Ragas đo trên 3–14 mẫu vì `EVAL_MAX_WORKERS=16` | `settings.py:113` | ✅ ĐÃ SỬA (→ 2) + thêm `n_scored` |
+| F7 | `/api/benchmark` 404 vĩnh viễn sai tên file | `app.py` | ⚠️ Không có endpoint này |
+| M1 | Gemini API key lọt vào log (query string URL) | `query_router.py:47,83` | ✅ ĐÃ SỬA (→ header) |
+| M4 | `ChatOpenAI` không đặt timeout → treo 600s | `llm_factory.py:52-62` | ✅ ĐÃ SỬA (timeout=60s) |
+| S1 | Không có git | repo | ✅ ĐÃ SỬA (`git init` + commit đầu tiên) |
+
+**Git commit:** `a7f109d` — 52 files, 6077 insertions
+
+---
+
 ## TÓM TẮT
 
 ---
