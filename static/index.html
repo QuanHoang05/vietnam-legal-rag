@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Insight into RAG — Trợ Lý Tra Cứu Tri Thức Thông Minh</title>
+  <meta name="description" content="Hệ thống hỏi đáp tra cứu tài liệu thông minh sử dụng Advanced RAG, Hybrid Search RRF và Cross-Encoder Reranking.">
+  
+  <!-- Google Fonts: Outfit, Inter, JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- TOP HEADER -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="logo-box">
+          <div class="logo-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <div>
+            <h1 class="logo-title">Insight into RAG</h1>
+            <p class="logo-sub">Hệ thống Tra Cứu Tri Thức Nâng Cao</p>
+          </div>
+        </div>
+        <div class="status-badge" id="system-status" title="Trạng thái máy chủ">
+          <span class="status-dot"></span>
+          <span class="status-text">Đang kết nối...</span>
+        </div>
+      </div>
+
+    </header>
+
+    <!-- MAIN CHAT WORKSPACE -->
+    <main class="chat-workspace">
+      <!-- CHAT THREAD -->
+      <div class="chat-thread" id="chat-thread">
+        <!-- WELCOME HERO (Hiển thị khi chưa có tin nhắn) -->
+        <div class="welcome-hero" id="welcome-hero">
+          <div class="hero-badge">Insight into RAG • Knowledge Intelligence</div>
+          <h2 class="hero-title">Trợ Lý Tra Cứu Tri Thức <span class="gradient-text">Chuẩn Xác & Đáng Tin Cậy</span></h2>
+          <p class="hero-desc">
+            Hỏi bất kỳ câu hỏi nào về kho tài liệu văn bản pháp luật (Đất đai, Lao động) và giáo trình Trí tuệ Nhân tạo.
+            Hệ thống kết hợp tìm kiếm ngữ nghĩa và từ khóa chính xác để trích xuất căn cứ minh bạch.
+          </p>
+
+          <div class="quick-prompts-label">GỢI Ý CÂU HỎI THỰC TẾ:</div>
+          <div class="quick-prompts-grid" id="quick-prompts">
+            <button type="button" class="prompt-chip" data-query="RAG là gì và nó khắc phục những nhược điểm nào của LLM?">
+              💡 RAG là gì và nó khắc phục nhược điểm nào của LLM?
+            </button>
+            <button type="button" class="prompt-chip" data-query="Tại sao kết hợp BM25 với Vector Search (Hybrid RRF) lại tối ưu hơn?">
+              🔍 Tại sao BM25 kết hợp Vector Search (Hybrid RRF) lại tối ưu hơn?
+            </button>
+            <button type="button" class="prompt-chip" data-query="Điều kiện để người lao động được hưởng trợ cấp thôi việc là gì?">
+              ⚖️ Điều kiện để người lao động được hưởng trợ cấp thôi việc?
+            </button>
+            <button type="button" class="prompt-chip" data-query="Thủ tục cấp Giấy chứng nhận quyền sử dụng đất (sổ đỏ) lần đầu?">
+              📜 Thủ tục cấp Giấy chứng nhận quyền sử dụng đất (sổ đỏ) lần đầu?
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- CHAT INPUT AREA (Được cố định ở đáy) -->
+      <div class="chat-input-container">
+        <form id="chat-form" class="input-form">
+          <div class="input-wrapper">
+            <textarea 
+              id="query-input" 
+              class="query-textarea" 
+              rows="1" 
+              placeholder="Nhập câu hỏi cần tra cứu... (Nhấn Enter để gửi)"
+              required
+            ></textarea>
+            
+            <button type="button" id="btn-abort" class="abort-btn" style="display:none;" title="Dừng tạo câu trả lời">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="6" y="6" width="12" height="12" rx="2"></rect>
+              </svg>
+              <span>Dừng</span>
+            </button>
+
+            <button type="submit" id="btn-submit" class="submit-btn" title="Gửi câu hỏi">
+              <span class="btn-spinner" id="btn-spinner"></span>
+              <svg id="send-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+            </button>
+          </div>
+        </form>
+        <div class="input-footer">
+          <span>Nhấn <code>Enter</code> để gửi câu hỏi • <code>Shift + Enter</code> để xuống dòng</span>
+        </div>
+      </div>
+    </main>
+
+
+  </div>
+
+  <!-- JavaScript -->
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

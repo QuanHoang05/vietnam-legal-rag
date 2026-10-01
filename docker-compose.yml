@@ -1,0 +1,54 @@
+services:
+  # 1. Giao diện Web Application + FastAPI REST API
+  rag-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rag-tracuu-web:latest
+    container_name: rag-tracuu-web
+    ports:
+      - "8000:8000"
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      - ./.env:/app/.env
+      - ./app.py:/app/app.py
+      - ./build_index.py:/app/build_index.py
+      - ./run_evaluation_50.py:/app/run_evaluation_50.py
+      - ./main.py:/app/main.py
+      - ./configs:/app/configs
+      - ./src:/app/src
+      - ./static:/app/static
+      - ./reports:/app/reports
+      - ./ducument:/app/ducument
+      - ./data:/app/data
+      - ./chroma_data:/app/chroma_data
+    command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    restart: unless-stopped
+
+  # 2. Chế độ CLI: lập chỉ mục, hỏi đáp, đánh giá
+  rag-cli:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rag-tracuu-web:latest
+    container_name: rag-tracuu-cli
+    stdin_open: true
+    tty: true
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      - ./.env:/app/.env
+      - ./app.py:/app/app.py
+      - ./build_index.py:/app/build_index.py
+      - ./run_evaluation_50.py:/app/run_evaluation_50.py
+      - ./main.py:/app/main.py
+      - ./configs:/app/configs
+      - ./src:/app/src
+      - ./ducument:/app/ducument
+      - ./data:/app/data
+      - ./chroma_data:/app/chroma_data
+      - ./reports:/app/reports
+    command: ["python", "main.py"]
