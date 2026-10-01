@@ -142,6 +142,3 @@ class CrossEncoderReranker:
         # 3. Fallback: Lấy Top k tài liệu từ danh sách RRF ban đầu
         return documents[: self.top_k]
 
-
-# Alias tương thích ngược
-OpenRouterReranker = CrossEncoderReranker

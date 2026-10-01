@@ -129,25 +129,6 @@ class VectorDB:
             persist_directory=self.persist_dir,
         )
 
-    def get_retriever(
-        self,
-        search_type: str = "similarity",
-        search_kwargs: Optional[Dict[str, Any]] = None,
-    ):
-        if search_kwargs is None:
-            if search_type == "mmr":
-                search_kwargs = {
-                    "k": settings.MMR_K,
-                    "fetch_k": settings.MMR_FETCH_K,
-                    "lambda_mult": settings.MMR_LAMBDA_MULT,
-                }
-            else:
-                search_kwargs = {"k": settings.BASELINE_RETRIEVE_K}
-
-        return self.db.as_retriever(
-            search_type=search_type,
-            search_kwargs=search_kwargs,
-        )
 
     def similarity_search(self, query: str, k: int = 3) -> List[Document]:
         return self.db.similarity_search(query, k=k)
@@ -285,25 +266,4 @@ class HybridVectorDB:
         return bm25_index
 
 
-    def get_retriever(self, search_kwargs: Optional[Dict[str, Any]] = None, reranker: Optional[Any] = None):
-        from src.retrieval.hybrid_retriever import HybridRetriever
-        from src.retrieval.reranker import CrossEncoderReranker
-
-        if search_kwargs is None:
-            search_kwargs = {"k": 5}
-
-        # Tự động trang bị CrossEncoderReranker để chạy quy trình 2 bước: RRF lọc thô -> Reranker lọc tinh
-        actual_reranker = reranker
-        if actual_reranker is None:
-            actual_reranker = CrossEncoderReranker(top_k=search_kwargs.get("k", 5))
-
-        return HybridRetriever(
-            vector_db=self.vector_db,
-            bm25=self.bm25,
-            documents=self.documents,
-            reranker=actual_reranker,
-            candidate_k=search_kwargs.get("candidate_k", 15),
-            k=search_kwargs.get("k", 5),
-            rrf_k=settings.RRF_K,
-        )
 

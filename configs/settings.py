@@ -39,17 +39,13 @@ class Settings:
 
     # Google AI Studio / Gemini API Configurations (Dành cho Query Router & Rewriter)
     GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
-    GEMINI_BASE_URL: str = os.getenv("GEMINI_BASE_URL", "https://generativelanguage.googleapis.com/v1beta/openai/")
     GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 
     # -------------------------------------------------------------
-    # 2. Embedding Configurations (OpenRouter API or FastEmbed)
+    # 2. Embedding Configurations
     # -------------------------------------------------------------
-    # Hỗ trợ 'openrouter' hoặc 'fastembed' (local ONNX, 0đ, 0 rate limit)
-    EMBEDDING_PROVIDER: str = os.getenv("EMBEDDING_PROVIDER", "fastembed")
-    # Mặc định sử dụng BAAI/bge-m3 (hỗ trợ tiếng Việt & đa ngữ) hoặc nvidia/llama-nemotron-embed-vl-1b-v2:free
+    # Mặc định sử dụng BAAI/bge-m3 (hỗ trợ tiếng Việt & đa ngữ)
     EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "BAAI/bge-m3")
-    EMBEDDING_BATCH_SIZE: int = int(os.getenv("EMBEDDING_BATCH_SIZE", "64"))
 
     # -------------------------------------------------------------
     # 3. Baseline & System Parameters
@@ -66,45 +62,15 @@ class Settings:
     _raw_testset_path = os.getenv("TESTSET_PATH", "data/benchmark_testset_50.json")
     TESTSET_PATH: str = str((BASE_DIR / _raw_testset_path).resolve()) if not Path(_raw_testset_path).is_absolute() else _raw_testset_path
 
-    # Fixed Chunking Parameters (Baseline)
-    CHUNK_SIZE: int = 1024
-    CHUNK_OVERLAP: int = 128
-    BASELINE_RETRIEVE_K: int = 3
-
-    # -------------------------------------------------------------
-    # 4. Experiment 1: Semantic Chunking Parameters
-    # -------------------------------------------------------------
-    SEMANTIC_BREAKPOINT_THRESHOLD: float = 0.5
-    MIN_CHUNK_SIZE: int = 600
-    MAX_CHUNK_SIZE: int = 1024
-    SEMANTIC_CHUNK_OVERLAP: int = 128
-
-    # -------------------------------------------------------------
-    # 5. Experiment 2: Retrieval Parameters
-    # -------------------------------------------------------------
-    BM25_K: int = 5
-    HYBRID_INTERLEAVING_TOP_K: int = 5
-    HYBRID_K: int = 7
+    BASELINE_RETRIEVE_K: int = 5
     RRF_K: int = 40  # Hằng số làm mượt mẫu số trong công thức RRF
 
     # -------------------------------------------------------------
-    # 6. Experiment 3: Query Transformation Parameters
-    # -------------------------------------------------------------
-    HYDE_K: int = 3
-    DECOMPOSITION_MAX_SUB_QUESTIONS: int = 3
-
-    # -------------------------------------------------------------
-    # 7. Experiment 4: Re-ranking Parameters (OpenRouter API)
+    # 4. Re-ranking Parameters
     # -------------------------------------------------------------
     # Mặc định sử dụng NVIDIA Llama Nemotron Rerank VL 1B V2 (10k context, miễn phí)
     RERANKER_MODEL: str = os.getenv("RERANKER_MODEL", "nvidia/llama-nemotron-rerank-vl-1b-v2:free")
-    RETRIEVE_K: int = 20  # Số docs lấy ra ban đầu trước khi rerank
-    RERANK_TOP_K: int = 7  # Số docs giữ lại sau rerank
-    
-    # MMR Parameters
-    MMR_K: int = 3
-    MMR_FETCH_K: int = 10
-    MMR_LAMBDA_MULT: float = 0.5
+    RERANK_TOP_K: int = 5  # Số docs giữ lại sau rerank
 
     # -------------------------------------------------------------
     # 8. Evaluation Parameters (Ragas)

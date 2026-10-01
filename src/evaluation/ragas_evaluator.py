@@ -15,7 +15,6 @@ def evaluate_ragas(
     sample_size: Optional[int] = settings.EVAL_SAMPLE_SIZE,
     max_workers: int = settings.EVAL_MAX_WORKERS,
     timeout: int = settings.EVAL_TIMEOUT,
-    force_ragas: bool = False,
 ) -> Dict[str, Any]:
     """
     Chấm điểm bộ kết quả RAG bằng Ragas Framework chính thức.

@@ -27,11 +27,10 @@ class LegalArticleChunker:
         
         # Regex nhận diện các mốc cấu trúc pháp luật
         self.re_chapter = re.compile(r"^(Chương|CHƯƠNG)\s+([IVXLCDM\d]+)[\.:\s]*(.*)$", re.IGNORECASE)
-        self.re_section = re.compile(r"^(Mục|MỤC)\s+(\d+)[\.:\s]*(.*)$", re.IGNORECASE)
         self.re_article = re.compile(r"^(Điều|ĐIỀU)\s+(\d+)[\.:\s]*(.*)$", re.IGNORECASE)
         self.re_clause = re.compile(r"^(\d+)[\.\s]+(.*)$")
 
-    def _detect_law_title(self, text_or_docs: Any, source_name: str = "", category: str = "") -> str:
+    def _detect_law_title(self, source_name: str = "", category: str = "") -> str:
         """Tự động suy luận tên văn bản luật từ nội dung hoặc tên file/danh mục."""
         source_upper = source_name.upper()
         cat_upper = category.upper()
@@ -63,7 +62,7 @@ class LegalArticleChunker:
 
         for source_name, src_docs in docs_by_source.items():
             category = src_docs[0].metadata.get("category", "Legal")
-            law_title = self._detect_law_title(src_docs, source_name=source_name, category=category)
+            law_title = self._detect_law_title(source_name=source_name, category=category)
 
             # Thu thập toàn bộ các dòng văn bản theo thứ tự
             all_lines: List[str] = []

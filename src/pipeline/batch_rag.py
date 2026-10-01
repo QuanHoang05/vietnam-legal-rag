@@ -7,7 +7,6 @@ Quản lý luồng xử lý truy vấn theo lô, kết hợp Retriever và LLM.
 from typing import List, Dict, Any, Optional
 from tqdm import tqdm
 from langchain_core.prompts import PromptTemplate
-from langchain_core.runnables import RunnablePassthrough
 from langchain_core.messages import HumanMessage
 from configs.settings import settings
 from .answer_parser import FocusedAnswerParser
