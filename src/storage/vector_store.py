@@ -67,11 +67,11 @@ class VectorDB:
         self,
         documents: Optional[List[Document]] = None,
         embedding: Optional[Any] = None,
-        collection_name: str = "vietnamese_docs",
+        collection_name: Optional[str] = None,
         persist_dir: Optional[str] = None,
     ):
         self.persist_dir = str(persist_dir or settings.PERSIST_DIR)
-        self.collection_name = collection_name
+        self.collection_name = collection_name or settings.CHROMA_COLLECTION_NAME
         self.embedding = embedding or get_embeddings()
         self.db = self._build_or_load_db(documents)
 
@@ -143,11 +143,11 @@ class HybridVectorDB:
         self,
         documents: Optional[List[Document]] = None,
         embedding: Optional[Any] = None,
-        collection_name: str = "vietnamese_docs",
+        collection_name: Optional[str] = None,
         persist_dir: Optional[str] = None,
     ):
         self.persist_dir = str(persist_dir or settings.PERSIST_DIR)
-        self.collection_name = collection_name
+        self.collection_name = collection_name or settings.CHROMA_COLLECTION_NAME
         self.embedding = embedding or get_embeddings()
         self.documents = documents or []
 

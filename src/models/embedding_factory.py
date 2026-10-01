@@ -4,10 +4,12 @@ Embedding Model cục bộ (Local Embedding) sử dụng BAAI/bge-m3.
 - 100% Offline, không phụ thuộc API key, không tốn chi phí.
 - Không giới hạn Rate Limit (0đ, không phụ thuộc mạng).
 - Hỗ trợ tiếng Việt và đa ngữ vượt trội với 1024 dimensions.
+- Cấu hình linh hoạt qua configs.settings.
 """
 
 from typing import List, Optional
 from langchain_core.embeddings import Embeddings
+from configs.settings import settings
 
 
 class BGEM3Embeddings(Embeddings):
@@ -18,8 +20,8 @@ class BGEM3Embeddings(Embeddings):
 
     def __init__(
         self,
-        model_name: str = "BAAI/bge-m3",
-        batch_size: int = 32,
+        model_name: Optional[str] = None,
+        batch_size: Optional[int] = None,
         device: Optional[str] = None,
         normalize_embeddings: bool = True,
     ):
@@ -31,8 +33,8 @@ class BGEM3Embeddings(Embeddings):
                 "Chưa cài đặt thư viện 'sentence-transformers'. Vui lòng chạy: pip install sentence-transformers"
             )
 
-        self.model_name = model_name
-        self.batch_size = batch_size
+        self.model_name = model_name or settings.EMBEDDING_MODEL
+        self.batch_size = batch_size or settings.EMBEDDING_BATCH_SIZE
         self.normalize_embeddings = normalize_embeddings
 
         if device is None:
@@ -40,7 +42,7 @@ class BGEM3Embeddings(Embeddings):
         else:
             self.device = device
 
-        print(f"[BGEM3Embeddings] Khởi tạo mô hình '{self.model_name}' trên thiết bị: {self.device}...")
+        print(f"[BGEM3Embeddings] Khởi tạo mô hình '{self.model_name}' trên thiết bị: {self.device} (batch_size={self.batch_size})...")
         self._model = SentenceTransformer(self.model_name, device=self.device)
 
     def embed_documents(self, texts: List[str]) -> List[List[float]]:
@@ -76,17 +78,19 @@ def get_embeddings(
     chunk_size: Optional[int] = None,
     api_key: Optional[str] = None,
     base_url: Optional[str] = None,
-    provider: Optional[str] = None,
+    _provider: Optional[str] = None,
 ) -> Embeddings:
     """
     Khởi tạo hoặc tái sử dụng instance Embedding BAAI/bge-m3 cục bộ.
-    Các tham số api_key, base_url, provider được giữ lại để tương thích chữ ký hàm nhưng không dùng đến.
+    Đọc cấu hình mặc định từ settings.EMBEDDING_MODEL và settings.EMBEDDING_BATCH_SIZE.
     """
     global _GLOBAL_EMBEDDING_INSTANCE
-    if _GLOBAL_EMBEDDING_INSTANCE is None:
-        batch_size = chunk_size or 32
+    target_model = model_name or settings.EMBEDDING_MODEL
+    target_batch = chunk_size or settings.EMBEDDING_BATCH_SIZE
+
+    if _GLOBAL_EMBEDDING_INSTANCE is None or _GLOBAL_EMBEDDING_INSTANCE.model_name != target_model:
         _GLOBAL_EMBEDDING_INSTANCE = BGEM3Embeddings(
-            model_name="BAAI/bge-m3",
-            batch_size=batch_size,
+            model_name=target_model,
+            batch_size=target_batch,
         )
     return _GLOBAL_EMBEDDING_INSTANCE

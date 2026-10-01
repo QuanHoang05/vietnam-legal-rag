@@ -5,6 +5,7 @@ Sử dụng trực tiếp REST API nguyên bản của Google AI Studio (Gemini)
 - Phân loại chiến lược bằng Structured JSON Output của Google.
 - Viết lại câu chuẩn xác, phân rã câu hỏi (Decompose), sinh văn bản giả định (HyDE).
 - Cơ chế tinh giản: Nếu không gọi được API thì truyền thẳng câu hỏi gốc của người dùng, không thêm thắt.
+- Toàn bộ tham số timeout, model, endpoint đều đọc tập trung từ settings.
 """
 
 import json
@@ -38,70 +39,96 @@ class LLMQueryRouter:
         self,
         api_key: Optional[str] = None,
         model_name: Optional[str] = None,
-        timeout: int = 15,
-        **kwargs
+        timeout: Optional[int] = None,
+        **_kwargs
     ):
-        self.api_key = api_key or getattr(settings, "GEMINI_API_KEY", "")
-        self.model_name = model_name or getattr(settings, "GEMINI_MODEL", "gemini-2.5-flash")
-        self.timeout = timeout
-        # Dùng URL không chứa key — key đặt trong header để tránh lộ vào log
-        self.endpoint_url = f"https://generativelanguage.googleapis.com/v1beta/models/{self.model_name}:generateContent"
+        self.api_key = api_key or settings.GEMINI_API_KEY
+        self.model_name = model_name or settings.GEMINI_MODEL
+        self.timeout = timeout if timeout is not None else settings.ROUTER_TIMEOUT
+        self.rest_base = settings.GEMINI_REST_URL.rstrip("/")
+        # Dùng URL không chứa key — key đặt trong header x-goog-api-key
+        self.endpoint_url = f"{self.rest_base}/models/{self.model_name}:generateContent"
 
-    def _call_gemini_api(self, system_instruction: str, user_prompt: str, json_mode: bool = False, temperature: float = 0.0) -> Optional[str]:
-        """Gọi trực tiếp Google AI Studio REST API bằng HTTP POST"""
-        if not self.api_key:
+    def _call_openrouter_fallback(self, system_instruction: str, user_prompt: str, json_mode: bool = False, temperature: float = 0.0) -> Optional[str]:
+        """Tự động chuyển đổi sang OpenRouter khi Google AI Studio gặp sự cố hoặc vượt giới hạn 429"""
+        try:
+            from langchain_core.messages import SystemMessage, HumanMessage
+            from src.models.llm_factory import get_llm
+            prompt_system = system_instruction
+            if json_mode:
+                prompt_system += "\nBẮT BUỘC: Chỉ trả về định dạng JSON hợp lệ, không có markdown codeblock, không kèm lời mở đầu."
+            
+            target_fallback = settings.OPENROUTER_FALLBACK_MODEL
+            openrouter_llm = get_llm(model_name=target_fallback, temperature=temperature)
+            resp = openrouter_llm.invoke([
+                SystemMessage(content=prompt_system),
+                HumanMessage(content=user_prompt)
+            ])
+            text = (resp.content if hasattr(resp, "content") else str(resp)).strip()
+            # Làm sạch nếu model bọc trong ```json ... ```
+            if text.startswith("```json"):
+                text = text[7:]
+            if text.startswith("```"):
+                text = text[3:]
+            if text.endswith("```"):
+                text = text[:-3]
+            text = text.strip()
+            print(f"  [QueryRouter Fallback] Đã kích hoạt dự phòng sang OpenRouter ({target_fallback}) thành công.")
+            return text
+        except Exception as e:
+            print(f"  [QueryRouter Fallback] Lỗi OpenRouter: {e}")
             return None
 
-        # API key trong header (không lộ trong URL/log)
+    def _call_gemini_api(self, system_instruction: str, user_prompt: str, json_mode: bool = False, temperature: float = 0.0) -> Optional[str]:
+        """Gọi Google AI Studio REST API với cơ chế tự động thử model phụ và Fallback sang OpenRouter"""
+        candidate_models = [self.model_name]
+        for extra in settings.GEMINI_FALLBACK_MODELS:
+            if extra not in candidate_models:
+                candidate_models.append(extra)
+
         headers = {
             "Content-Type": "application/json",
             "x-goog-api-key": self.api_key,
         }
-        payload: Dict[str, Any] = {
-            "system_instruction": {
-                "parts": [{"text": system_instruction}]
-            },
-            "contents": [
-                {
-                    "role": "user",
-                    "parts": [{"text": user_prompt}]
-                }
-            ],
-            "generationConfig": {
-                "temperature": temperature,
+
+        for model in candidate_models:
+            if not self.api_key:
+                break
+            endpoint_url = f"{self.rest_base}/models/{model}:generateContent"
+            payload: Dict[str, Any] = {
+                "system_instruction": {"parts": [{"text": system_instruction}]},
+                "contents": [{"role": "user", "parts": [{"text": user_prompt}]}],
+                "generationConfig": {"temperature": temperature}
             }
-        }
+            if json_mode:
+                payload["generationConfig"]["responseMimeType"] = "application/json"
 
-        if json_mode:
-            payload["generationConfig"]["responseMimeType"] = "application/json"
+            try:
+                resp = requests.post(endpoint_url, headers=headers, json=payload, timeout=self.timeout)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    candidates = data.get("candidates", [])
+                    if candidates:
+                        parts = candidates[0].get("content", {}).get("parts", [])
+                        if parts:
+                            return parts[0].get("text", "").strip()
+                elif resp.status_code == 429:
+                    print(f"  [QueryRouter] Model '{model}' chạm giới hạn (HTTP 429). Đang chuyển sang phương án dự phòng...")
+                else:
+                    safe_body = resp.text.replace(self.api_key, "***KEY***") if self.api_key else resp.text
+                    print(f"  [QueryRouter] Model '{model}' HTTP {resp.status_code} — {safe_body[:100]}")
+            except Exception as e:
+                err_msg = str(e).replace(self.api_key, "***KEY***") if self.api_key else str(e)
+                print(f"  [QueryRouter] Model '{model}' lỗi kết nối: {err_msg}")
 
-        try:
-            resp = requests.post(self.endpoint_url, headers=headers, json=payload, timeout=self.timeout)
-            if resp.status_code == 200:
-                data = resp.json()
-                candidates = data.get("candidates", [])
-                if candidates:
-                    parts = candidates[0].get("content", {}).get("parts", [])
-                    if parts:
-                        return parts[0].get("text", "").strip()
-            else:
-                # Ẩn key khỏi resp.text trước khi in log
-                safe_body = resp.text.replace(self.api_key, "***KEY***") if self.api_key else resp.text
-                status_code = resp.status_code
-                # Không in toàn bộ body để tránh lộ thông tin; chỉ in status + 200 ký tự đầu
-                print(f"[Google AI Studio API] HTTP {status_code} — {safe_body[:200]}")
-        except Exception as e:
-            # Che key trong traceback
-            err_msg = str(e).replace(self.api_key, "***KEY***") if self.api_key else str(e)
-            print(f"[Google AI Studio API] Ngoại lệ kết nối: {err_msg}")
-
-        return None
+        # Khi toàn bộ model Google AI Studio lỗi -> Chuyển ngay sang OpenRouter Fallback
+        return self._call_openrouter_fallback(system_instruction, user_prompt, json_mode=json_mode, temperature=temperature)
 
     # ============================================================
     # 1. PHÂN LOẠI CHIẾN LƯỢC (ROUTER)
     # ============================================================
     def decide_strategy(self, query: str) -> RouteDecision:
-        """Phân tích câu hỏi và quyết định chiến lược xử lý qua Google AI Studio"""
+        """Phân tích câu hỏi và quyết định chiến lược xử lý qua LLM với đa tầng dự phòng"""
         system_prompt = (
             "Bạn là một chuyên gia tối ưu truy vấn tìm kiếm (Query Router) cho hệ thống RAG pháp lý và công nghệ. "
             "Nhiệm vụ của bạn là phân tích câu hỏi người dùng và chọn DUY NHẤT 1 chiến lược phù hợp nhất:\n"
@@ -118,13 +145,20 @@ class LLMQueryRouter:
 
         if raw_json:
             try:
-                data = json.loads(raw_json)
+                clean_json = raw_json.strip()
+                if clean_json.startswith("```json"):
+                    clean_json = clean_json[7:]
+                if clean_json.startswith("```"):
+                    clean_json = clean_json[3:]
+                if clean_json.endswith("```"):
+                    clean_json = clean_json[:-3]
+                data = json.loads(clean_json.strip())
                 return RouteDecision(**data)
             except Exception as e:
-                print(f"[Google AI Studio] Lỗi parse JSON: {e}")
+                print(f"[QueryRouter] Lỗi parse JSON: {e} | Raw: {raw_json[:100]}")
 
-        # NẾU KHÔNG GỌI ĐƯỢC API THÌ TRUYỀN THẲNG CÂU HỎI VÀO (DIRECT), KHÔNG THÊM THẮT
-        return RouteDecision(strategy="direct", reasoning="Không thể kết nối API Google AI Studio, truyền thẳng câu hỏi gốc.")
+        # Chỉ khi tất cả LLM đều không phản hồi thì mới fallback về direct
+        return RouteDecision(strategy="direct", reasoning="Toàn bộ kết nối API LLM đều gián đoạn, truyền thẳng câu hỏi gốc.")
 
     # ============================================================
     # 2. PHƯƠNG PHÁP VIẾT LẠI CÂU BẰNG LLM (QUERY REWRITING)

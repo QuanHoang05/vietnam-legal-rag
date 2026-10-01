@@ -14,6 +14,7 @@ import hashlib
 from typing import List, Dict, Any, Tuple, Optional
 from pathlib import Path
 from langchain_core.documents import Document
+from configs.settings import settings
 
 
 class LegalArticleChunker:
@@ -21,9 +22,9 @@ class LegalArticleChunker:
     Bộ chia đoạn cấu trúc văn bản pháp luật Việt Nam.
     """
 
-    def __init__(self, max_chunk_size: int = 1400, min_chunk_size: int = 80):
-        self.max_chunk_size = max_chunk_size
-        self.min_chunk_size = min_chunk_size
+    def __init__(self, max_chunk_size: Optional[int] = None, min_chunk_size: Optional[int] = None):
+        self.max_chunk_size = max_chunk_size if max_chunk_size is not None else settings.LEGAL_CHUNK_MAX_SIZE
+        self.min_chunk_size = min_chunk_size if min_chunk_size is not None else settings.LEGAL_CHUNK_MIN_SIZE
         
         # Regex nhận diện các mốc cấu trúc pháp luật
         self.re_chapter = re.compile(r"^(Chương|CHƯƠNG)\s+([IVXLCDM\d]+)[\.:\s]*(.*)$", re.IGNORECASE)

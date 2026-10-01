@@ -21,6 +21,8 @@ chroma_data/
 chroma_data_*
 reports/*.png
 reports/*.pdf
+reports/*inference_cache.json
+scratch/
 
 # IDE & OS
 .vscode/

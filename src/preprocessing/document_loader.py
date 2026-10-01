@@ -102,7 +102,7 @@ class UniversalDocumentLoader:
 
         return docs
 
-    def load_all(self, base_dir: str, max_files_per_category: Optional[int] = None) -> List[Document]:
+    def load_all(self, base_dir: str, _max_files_per_category: Optional[int] = None) -> List[Document]:
         """
         Duyệt đệ quy toàn bộ thư mục tri thức, nạp tất cả PDF và DOCX.
         Tự động phân nhóm Category theo tên thư mục cha.

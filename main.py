@@ -67,8 +67,8 @@ def build_pipeline(model_name: str = None):
         bm25=hdb.bm25,
         documents=hdb.documents,
         reranker=reranker,
-        candidate_k=15,
-        k=5,
+        candidate_k=settings.CANDIDATE_K,
+        k=settings.RERANK_TOP_K,
     )
 
     router = QueryRouter(api_key=settings.GEMINI_API_KEY)

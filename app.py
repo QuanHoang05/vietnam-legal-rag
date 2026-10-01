@@ -39,7 +39,7 @@ app = FastAPI(
 )
 
 # CORS Middleware - Giới hạn origin thay vì allow_origins=["*"]
-ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:8000,http://127.0.0.1:8000").split(",")
+ALLOWED_ORIGINS = settings.ALLOWED_ORIGINS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
@@ -52,8 +52,8 @@ app.add_middleware(
 # RATE LIMITING (in-memory, per IP)
 # ============================================================
 _rate_limit_store: Dict[str, List[float]] = defaultdict(list)
-RATE_LIMIT_MAX = int(os.getenv("RATE_LIMIT_MAX", "20"))   # max requests
-RATE_LIMIT_WINDOW = int(os.getenv("RATE_LIMIT_WINDOW", "60"))  # per N seconds
+RATE_LIMIT_MAX = settings.RATE_LIMIT_MAX   # max requests
+RATE_LIMIT_WINDOW = settings.RATE_LIMIT_WINDOW  # per N seconds
 
 def check_rate_limit(ip: str):
     now = time.time()
@@ -120,7 +120,7 @@ class PipelineManager:
         self.hybrid_db = HybridVectorDB(
             documents=None,
             embedding=emb_fn,
-            collection_name="vietnamese_docs",
+            collection_name=settings.CHROMA_COLLECTION_NAME,
             persist_dir=settings.PERSIST_DIR,
         )
         return self.hybrid_db
@@ -297,7 +297,7 @@ def chat_endpoint(req: QueryRequest, request: Request):
         # Khởi tạo Cross-Encoder Re-ranker (OpenRouter + Gemini fallback)
         reranker = CrossEncoderReranker(
             model_name=actual_rerank_model,
-            top_k=req.top_k or 5,
+            top_k=req.top_k or settings.RERANK_TOP_K,
             api_key=actual_key,
         )
 
@@ -311,8 +311,8 @@ def chat_endpoint(req: QueryRequest, request: Request):
             bm25=hdb.bm25,
             documents=hdb.documents,
             reranker=reranker,
-            candidate_k=15,  # Lọc thô lấy 15 đoạn ứng viên
-            k=req.top_k or 5,  # Lọc tinh lấy 4-5 đoạn chất lượng nhất cho LLM
+            candidate_k=settings.CANDIDATE_K,  # Lọc thô lấy đoạn ứng viên chuẩn hóa theo settings
+            k=req.top_k or settings.RERANK_TOP_K,  # Lọc tinh đoạn chất lượng nhất cho LLM
         )
 
         rag = BatchRAG(llm=llm)
@@ -479,4 +479,4 @@ if __name__ == "__main__":
     print(" Giao diện web:   http://localhost:8000")
     print(" API Swagger Docs: http://localhost:8000/docs")
     print("=" * 70 + "\n")
-    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("app:app", host=settings.APP_HOST, port=settings.APP_PORT, reload=True)

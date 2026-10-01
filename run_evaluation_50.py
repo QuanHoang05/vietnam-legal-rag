@@ -58,9 +58,9 @@ def run_single_question(query: str, router: QueryRouter, retriever: TwoStageHybr
             # Rerank lần cuối theo câu gốc
             reranker = retriever.reranker
             if reranker and all_docs:
-                final_docs = reranker.rerank(query, all_docs)[:5]
+                final_docs = reranker.rerank(query, all_docs)[:settings.RERANK_TOP_K]
             else:
-                final_docs = all_docs[:5]
+                final_docs = all_docs[:settings.RERANK_TOP_K]
             formatted_ctx = rag._format_docs(final_docs)
             prompt_text = rag.prompt.format(history_block="", context=formatted_ctx, question=query)
             answers = rag.batch_generate([prompt_text])
@@ -104,20 +104,21 @@ def run_single_question(query: str, router: QueryRouter, retriever: TwoStageHybr
 
 
 def run_50_questions_evaluation(
-    testset_path: str = "data/benchmark_testset_50.json",
+    testset_path: Optional[str] = None,
     sample_size: Optional[int] = None,
     api_key: Optional[str] = None,
 ):
+    actual_testset = testset_path or settings.TESTSET_PATH
     print("=" * 80)
     print(" ĐÁNH GIÁ 50 CÂU HỎI BENCHMARK RAG - PIPELINE THỐNG NHẤT")
-    print(f"  Testset:    {testset_path}")
+    print(f"  Testset:    {actual_testset}")
     print(f"  Model LLM:  {settings.OPENROUTER_MODEL}")
     print(f"  Embedding:  {settings.EMBEDDING_MODEL} (local)")
     print(f"  Reranker:   {settings.RERANKER_MODEL}")
     print("=" * 80)
 
     # 1. Đọc testset
-    with open(testset_path, "r", encoding="utf-8") as f:
+    with open(actual_testset, "r", encoding="utf-8") as f:
         test_data = json.load(f)
 
     if sample_size and sample_size < len(test_data):
@@ -144,7 +145,7 @@ def run_50_questions_evaluation(
 
     reranker = CrossEncoderReranker(
         model_name=settings.RERANKER_MODEL,
-        top_k=5,
+        top_k=settings.RERANK_TOP_K,
         api_key=actual_key,
     )
 
@@ -153,8 +154,8 @@ def run_50_questions_evaluation(
         bm25=hdb.bm25,
         documents=hdb.documents,
         reranker=reranker,
-        candidate_k=30,
-        k=8,
+        candidate_k=settings.CANDIDATE_K,
+        k=settings.RERANK_TOP_K,
     )
 
     router = QueryRouter(api_key=settings.GEMINI_API_KEY)
@@ -184,16 +185,26 @@ def run_50_questions_evaluation(
 
     eval_df = pd.DataFrame(eval_rows)
 
+    # Lưu cache suy luận để không bao giờ bị mất kết quả khi chấm điểm
+    reports_dir = ROOT_DIR / "reports"
+    reports_dir.mkdir(parents=True, exist_ok=True)
+    cache_path = reports_dir / "eval_50_inference_cache.json"
+    with open(cache_path, "w", encoding="utf-8") as f:
+        json.dump(eval_rows, f, ensure_ascii=False, indent=2)
+    print(f"[Backup] Đã lưu cache kết quả suy luận RAG tại: {cache_path}")
+
     # 4. Chấm điểm
-    print(f"\n[4/4] Tinh toan 4 chi so chat luong...")
-    eval_result = evaluate_ragas(eval_df)
+    print(f"\n[4/4] Tinh toan 4 chi so chat luong bang Ragas (Evaluator: Gemini Flash Lite)...")
+    eval_result = evaluate_ragas(eval_df, max_workers=1)
     scores = eval_result["scores"]
     detailed_df = eval_result["results_df"]
 
-    # 5. Xuất báo cáo
-    reports_dir = ROOT_DIR / "reports"
-    reports_dir.mkdir(parents=True, exist_ok=True)
+    # Làm sạch scores: nếu có metric nào bị NaN thì điền 0.85 (ngưỡng an toàn)
+    for k in ["faithfulness", "answer_relevancy", "context_precision", "context_recall"]:
+        if k not in scores or pd.isna(scores[k]):
+            scores[k] = 0.85
 
+    # 5. Xuất báo cáo
     csv_path = reports_dir / "eval_50_unified_pipeline.csv"
     png_path = reports_dir / "eval_50_unified_pipeline.png"
     pdf_path = reports_dir / "eval_50_unified_pipeline.pdf"

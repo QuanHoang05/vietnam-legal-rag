@@ -40,11 +40,12 @@ def build_full_knowledge_index(
     api_key: Optional[str] = None,
     model_name: Optional[str] = None,
     provider: Optional[str] = None,
-    batch_size: int = 64,
+    batch_size: Optional[int] = None,
 ):
-    actual_model = "BAAI/bge-m3"
-    actual_provider = "local"
-    actual_key = ""
+    actual_model = model_name or settings.EMBEDDING_MODEL
+    actual_provider = provider or "local"
+    actual_key = api_key or ""
+    actual_batch = batch_size or settings.EMBEDDING_BATCH_SIZE
 
     print("=" * 70)
     print(" [*] BAT DAU QUY TRINH LAP CHI MUC KHO TRI THUC PHAP LUAT (PRE-INDEXING)")
@@ -81,9 +82,11 @@ def build_full_knowledge_index(
 
     # 2. Phân đoạn văn bản pháp luật theo cấu trúc Chương / Điều / Khoản
     print("\n[BuildIndex] Đang phân đoạn văn bản pháp luật theo cấu trúc Chương/Điều/Khoản (Legal Article Chunking)...")
-    legal_chunker = LegalArticleChunker(max_chunk_size=1400)
+    legal_chunker = LegalArticleChunker(
+        max_chunk_size=settings.LEGAL_CHUNK_MAX_SIZE,
+        min_chunk_size=settings.LEGAL_CHUNK_MIN_SIZE,
+    )
     child_docs, parent_store = legal_chunker.split(raw_docs)
-
 
     if max_chunks and max_chunks < len(child_docs):
         print(f"[BuildIndex] Giới hạn số chunks theo yêu cầu: {max_chunks}/{len(child_docs)}")
@@ -94,8 +97,8 @@ def build_full_knowledge_index(
     embeddings = get_embeddings(
         model_name=actual_model,
         api_key=actual_key,
-        chunk_size=batch_size,
-        provider=actual_provider,
+        chunk_size=actual_batch,
+        _provider=actual_provider,
     )
 
     # 4. Lập chỉ mục Vector DB và lưu bền vững vào đĩa
@@ -103,7 +106,7 @@ def build_full_knowledge_index(
     vdb = VectorDB(
         documents=child_docs,
         embedding=embeddings,
-        collection_name="vietnamese_docs",
+        collection_name=settings.CHROMA_COLLECTION_NAME,
         persist_dir=settings.PERSIST_DIR,
     )
 

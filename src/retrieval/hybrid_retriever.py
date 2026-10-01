@@ -33,8 +33,8 @@ class HybridRetriever(BaseRetriever):
     bm25: Any = Field(description="Chỉ mục BM25Okapi")
     documents: List[Any] = Field(description="Danh sách tài liệu tương ứng BM25")
     reranker: Optional[Any] = Field(default=None, description="CrossEncoderReranker instance (Lọc tinh)")
-    candidate_k: int = Field(default=15, description="Số lượng ứng viên lọc thô qua RRF (mặc định 15-20 đoạn)")
-    k: int = Field(default=5, description="Số lượng tài liệu chắt lọc tinh cuối cùng cho LLM (mặc định 3-5 đoạn)")
+    candidate_k: int = Field(default=settings.CANDIDATE_K, description="Số lượng ứng viên lọc thô qua RRF (mặc định cấu hình qua settings)")
+    k: int = Field(default=settings.RERANK_TOP_K, description="Số lượng tài liệu chắt lọc tinh cuối cùng cho LLM (mặc định qua settings)")
     rrf_k: int = Field(default=settings.RRF_K, description="Hằng số làm mượt mẫu số RRF (mặc định 40)")
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
@@ -60,7 +60,7 @@ class HybridRetriever(BaseRetriever):
         self,
         query: str,
         *,
-        run_manager: Optional[CallbackManagerForRetrieverRun] = None,
+        _run_manager: Optional[CallbackManagerForRetrieverRun] = None,
     ) -> List[Document]:
         results_list = []
 
