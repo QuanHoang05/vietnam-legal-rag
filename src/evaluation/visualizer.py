@@ -4,6 +4,18 @@ Trực quan hóa kết quả đánh giá hệ thống RAG:
 2. Biểu đồ so sánh độ chênh lệch (Delta) so với Baseline cho toàn bộ 9 cấu hình (Hình 19 trong tài liệu).
 """
 
+import sys
+if hasattr(sys.stdout, 'reconfigure'):
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
+if hasattr(sys.stderr, 'reconfigure'):
+    try:
+        sys.stderr.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
+
 from pathlib import Path
 from typing import Dict, Any
 import matplotlib.pyplot as plt

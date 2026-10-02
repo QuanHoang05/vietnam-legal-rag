@@ -192,6 +192,18 @@ class QueryResponse(BaseModel):
 # ============================================================
 # Endpoints
 # ============================================================
+@app.get("/health")
+@app.get("/api/health")
+def health_check():
+    """Kiểm tra trạng thái hoạt động của hệ thống (Health Check)"""
+    return {
+        "status": "healthy",
+        "service": "Vietnam Legal RAG API",
+        "version": "2.2.0",
+        "timestamp": time.time(),
+    }
+
+
 @app.get("/api/config")
 def get_config():
     """Lấy cấu hình hệ thống và câu hỏi mẫu"""
@@ -429,20 +441,32 @@ def list_documents():
 
 @app.get("/api/benchmark")
 def get_benchmark_report():
-    """Lấy dữ liệu kết quả đánh giá Ragas 50 câu hỏi (benchmark_summary.csv)"""
-    csv_path = ROOT_DIR / "reports" / "benchmark_summary.csv"
-    if not csv_path.exists():
-        raise HTTPException(status_code=404, detail="Chưa có dữ liệu benchmark. Hãy chạy run_evaluation_50.py trước.")
+    """Lấy dữ liệu kết quả đánh giá benchmark mới nhất trong thư mục reports/"""
+    reports_dir = ROOT_DIR / "reports"
+    candidates = sorted(reports_dir.glob("eval_*.csv"), key=lambda p: p.stat().st_mtime, reverse=True)
+    if not candidates:
+        old_csv = reports_dir / "benchmark_summary.csv"
+        if old_csv.exists():
+            candidates = [old_csv]
+        else:
+            raise HTTPException(
+                status_code=404,
+                detail="Chưa có dữ liệu benchmark. Hãy chạy: python run_evaluation.py --method llm_judge",
+            )
 
+    csv_path = candidates[0]
     import pandas as pd
     df = pd.read_csv(csv_path)
     records = df.to_dict(orient="records")
 
-    chart_exists = (ROOT_DIR / "reports" / "benchmark_comparison_full.png").exists()
+    png_name = csv_path.stem + ".png"
+    png_path = reports_dir / png_name
+    chart_url = f"/reports/{png_name}" if png_path.exists() else None
 
     return {
         "status": "success",
-        "chart_url": "/reports/benchmark_comparison_full.png" if chart_exists else None,
+        "file_name": csv_path.name,
+        "chart_url": chart_url,
         "table": records,
     }
 
