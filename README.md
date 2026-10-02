@@ -125,7 +125,6 @@ vietnam-legal-rag/
 ├── main.py                      # Giao diện dòng lệnh tra cứu CLI
 ├── run_inference.py             # Giai đoạn 1: Chuyên suy luận RAG & lưu cache JSON (tùy chỉnh số câu)
 ├── run_evaluation.py            # Giai đoạn 2: Đánh giá chất lượng từ cache (LLM Judge / Ragas)
-├── run_evaluation_50.py         # Wrapper tương thích ngược (chạy cả 2 giai đoạn hoặc từ cache)
 ├── Dockerfile                   # Docker build tối ưu CPU (torch CPU nhẹ ~200MB, pre-cache model)
 ├── docker-compose.yml           # Điều phối dịch vụ Web & CLI qua Docker
 ├── requirements.txt             # Danh sách thư viện phụ thuộc
@@ -266,18 +265,6 @@ python run_evaluation.py --cache reports/eval_20_inference_cache.json --method r
   - Bảng điểm CSV: `reports/eval_{N}_ragas.csv`
   - Biểu đồ đồ thị PNG: `reports/eval_{N}_ragas.png`
   - Báo cáo biểu đồ PDF: `reports/eval_{N}_ragas.pdf`
-
----
-
-### 🎯 Tương thích ngược: Sử dụng `run_evaluation_50.py`
-Bạn vẫn có thể sử dụng script quen thuộc để chạy linh hoạt:
-```bash
-# Tự động suy luận rồi chấm điểm luôn (tùy chọn số câu):
-python run_evaluation_50.py --sample-size 20 --method llm_judge
-
-# Hoặc chỉ chấm điểm lại từ cache có sẵn:
-python run_evaluation_50.py --cache reports/eval_20_inference_cache.json --method llm_judge
-```
 
 ---
 

@@ -17,7 +17,6 @@ services:
       - ./build_index.py:/app/build_index.py
       - ./run_inference.py:/app/run_inference.py
       - ./run_evaluation.py:/app/run_evaluation.py
-      - ./run_evaluation_50.py:/app/run_evaluation_50.py
       - ./main.py:/app/main.py
       - ./configs:/app/configs
       - ./src:/app/src
@@ -47,7 +46,6 @@ services:
       - ./build_index.py:/app/build_index.py
       - ./run_inference.py:/app/run_inference.py
       - ./run_evaluation.py:/app/run_evaluation.py
-      - ./run_evaluation_50.py:/app/run_evaluation_50.py
       - ./main.py:/app/main.py
       - ./configs:/app/configs
       - ./src:/app/src
