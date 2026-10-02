@@ -266,6 +266,44 @@ python run_evaluation.py --cache reports/eval_20_inference_cache.json --method r
   - Biểu đồ đồ thị PNG: `reports/eval_{N}_ragas.png`
   - Báo cáo biểu đồ PDF: `reports/eval_{N}_ragas.pdf`
 
+#### 🌐 Phương án C: Đưa File Cache lên Giao diện Web LLM (ChatGPT / Claude / Qwen / Gemini Web)
+
+Ngoài việc chạy script Python tự động, bạn hoàn toàn có thể lấy file suy luận đã sinh ra ở Giai đoạn 1: [`reports/eval_20_inference_cache.json`](reports/eval_20_inference_cache.json) (chứa toàn bộ 20 câu hỏi, ngữ cảnh luật trích xuất, câu trả lời sinh ra và đáp án chuẩn) để tải trực tiếp lên các mô hình Web chat lớn (ChatGPT-4o, Claude 3.5 Sonnet, Google AI Studio, Qwen Chat) để thẩm định độc lập.
+
+**Lệnh Prompt Chuẩn Mực (Master Evaluation Prompt):**
+Copy nguyên văn prompt dưới đây và gửi kèm file cache:
+
+```text
+Bạn là một chuyên gia đánh giá hệ thống RAG (Retrieval-Augmented Generation) độc lập, khách quan và tuân thủ chặt chẽ framework Ragas.
+
+Hãy đọc file JSON đính kèm (chứa 20 câu hỏi, retrieved_contexts, response và reference). Với từng mẫu (từ câu 1 đến 20), hãy chấm điểm 4 chỉ số chất lượng trên thang điểm từ 0.0 đến 1.0 (lấy 2 chữ số thập phân) theo đúng định nghĩa chuẩn:
+
+1. faithfulness (Độ trung thực - [0.0 đến 1.0]):
+   - Tỷ lệ các khẳng định/thông tin trong "response" có bằng chứng trực tiếp từ "retrieved_contexts" hay không?
+   - 1.0 nếu mọi ý đều có trích dẫn/căn cứ rõ trong context; trừ điểm nặng nếu có ảo giác (hallucination) hoặc suy diễn không có trong context.
+
+2. answer_relevancy (Độ phù hợp của câu trả lời - [0.0 đến 1.0]):
+   - "response" có trả lời đúng trọng tâm và đầy đủ câu hỏi trong "user_input" hay không? (Không đánh giá tính đúng sai sự thật ở đây, chỉ đánh giá mức độ bám sát câu hỏi).
+
+3. context_precision (Độ chính xác truy xuất - [0.0 đến 1.0]):
+   - Trong danh sách "retrieved_contexts", các đoạn luật thực sự hữu ích để trả lời có nằm ở các vị trí đầu tiên (rank cao) hay không?
+
+4. context_recall (Độ bao phủ ngữ cảnh - [0.0 đến 1.0]):
+   - Các luận điểm cốt lõi trong "reference" (đáp án chuẩn) có được tìm thấy đầy đủ trong "retrieved_contexts" hay không?
+
+YÊU CẦU ĐẦU RA:
+Hãy chấm thật công tâm, khắt khe và xuất kết quả dưới dạng BẢNG CSV duy nhất có các cột sau:
+id,question,faithfulness,answer_relevancy,context_precision,context_recall
+Và ở dòng cuối cùng in ra điểm trung bình (Mean) của từng chỉ số.
+```
+
+**⚠️ Lưu ý Khoa học về Độ Lệch Điểm Số giữa các Mô hình LLM Khác Nhau:**
+Khi thẩm định bằng các LLM khác nhau (ví dụ: Google Gemini vs GPT-4o vs Claude 3.5 vs Qwen 2.5), bạn có thể thấy điểm số giữa các lần chấm có sự chênh lệch nhẹ. Đây là **hiện tượng hoàn toàn tự nhiên và phổ biến trong nghiên cứu AI** vì các lý do khách quan sau:
+1. **Triết lý Căn chỉnh & An toàn (Alignment & RLHF Policies):** Mỗi nhà phát triển huấn luyện LLM với tiêu chuẩn khắt khe khác nhau. Ví dụ: Gemini và Claude thường trừ điểm rất nặng khi câu trả lời từ chối *"Không có thông tin"*, trong khi một số mô hình khác lại đánh giá đó là hành vi thận trọng chấp nhận được.
+2. **Cơ chế Phân bổ Chú ý Ngữ cảnh Dài (Attention Distribution in Long Contexts):** Các đoạn trích dẫn điều luật tiếng Việt chứa nhiều thuật ngữ pháp lý phức tạp. Mỗi kiến trúc mô hình (Dense Transformer vs Mixture of Experts) có khả năng định vị trọng số chú ý khác nhau đối với số hiệu Điều/Khoản nằm ở giữa văn bản.
+3. **Hiệu ứng Quầng hào quang (Halo Effect):** Nếu câu trả lời được RAG sinh ra với văn phong trau chuốt, tự nhiên, một số mô hình có xu hướng nới tay hơn cho chỉ số Relevancy.
+4. **Khuyến nghị Thực nghiệm:** Để có kết quả đáng tin cậy nhất, nên ưu tiên sử dụng các mô hình Frontier (GPT-4o, Claude 3.5 Sonnet, Gemini 2.5 Flash, Qwen-2.5-72B) và thiết lập `temperature=0.0` để tối đa hóa tính xác thực và tính tái lập (Reproducibility).
+
 ---
 
 ## 📈 8. Tiêu chuẩn Đánh giá Benchmark
