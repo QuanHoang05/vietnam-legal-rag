@@ -56,21 +56,53 @@ def get_openrouter_llm(
 
 def get_evaluator_llm() -> Any:
     """
-    Khởi tạo LLM chuyên dùng cho việc đánh giá Ragas.
-    Sử dụng trực tiếp ChatOpenAI tới Google Gemini OpenAI-compatible endpoint
-    (đảm bảo có thuộc tính .temperature mà Ragas yêu cầu).
+    Khởi tạo LLM chuyên dùng cho việc đánh giá Ragas & LLM-as-a-Judge.
+    Tự động gắn chuỗi Fallback đa tầng (.with_fallbacks) qua các mô hình Gemini và OpenRouter
+    nhằm đảm bảo không bị đứt đoạn khi một mô hình chạm ngưỡng Quota (HTTP 429).
     """
     from langchain_openai import ChatOpenAI
+
+    candidates = []
+
+    # 1. Google Gemini models (Model chính + Danh sách dự phòng)
     gemini_key = settings.GEMINI_API_KEY
     if gemini_key and len(gemini_key) > 10:
-        return ChatOpenAI(
-            model=settings.GEMINI_MODEL,
-            api_key=gemini_key,
-            base_url=settings.GEMINI_BASE_URL,
-            temperature=0.0,
-            request_timeout=settings.LLM_TIMEOUT,
+        gemini_models = [settings.GEMINI_MODEL]
+        for fb in settings.GEMINI_FALLBACK_MODELS:
+            if fb not in gemini_models:
+                gemini_models.append(fb)
+
+        for gm in gemini_models:
+            candidates.append(
+                ChatOpenAI(
+                    model=gm,
+                    api_key=gemini_key,
+                    base_url=settings.GEMINI_BASE_URL,
+                    temperature=0.0,
+                    request_timeout=settings.LLM_TIMEOUT,
+                )
+            )
+
+    # 2. OpenRouter fallback models
+    if settings.OPENROUTER_API_KEY and "your" not in settings.OPENROUTER_API_KEY:
+        candidates.append(
+            get_openrouter_llm(model_name=settings.OPENROUTER_MODEL, temperature=0.0)
         )
-    return get_openrouter_llm(model_name=settings.OPENROUTER_MODEL, temperature=0.0)
+        if settings.OPENROUTER_FALLBACK_MODEL != settings.OPENROUTER_MODEL:
+            candidates.append(
+                get_openrouter_llm(
+                    model_name=settings.OPENROUTER_FALLBACK_MODEL, temperature=0.0
+                )
+            )
+
+    if not candidates:
+        return get_openrouter_llm(model_name=settings.OPENROUTER_MODEL, temperature=0.0)
+
+    primary = candidates[0]
+    fallbacks = candidates[1:]
+    if fallbacks:
+        return primary.with_fallbacks(fallbacks)
+    return primary
 
 
 class CascadeChatModel:
